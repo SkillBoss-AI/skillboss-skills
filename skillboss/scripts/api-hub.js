@@ -181,7 +181,8 @@ Direct Model Calls (when you already have a model ID):
               console.log(`\nRecommended models for type "${args.type}":`)
               for (const m of r.models) {
                 const score = m.score ? ` (score: ${m.score})` : ''
-                console.log(`  ${m.id || m.model}${score}`)
+                const modelId = m.recommended_vendor || m.id || m.base_model || m.model
+                console.log(`  ${modelId}${score}`)
                 if (m.display_name) console.log(`    ${m.display_name}`)
               }
             } else {
