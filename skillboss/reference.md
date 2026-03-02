@@ -4,6 +4,8 @@ Complete model list and detailed parameter documentation.
 
 ## All Supported Models
 
+> **Tip:** Use `pilot --discover` to browse models interactively, or `pilot --type TYPE --prefer price` to get ranked recommendations.
+
 ### Chat Completions
 
 **Bedrock (AWS Claude):**
@@ -168,6 +170,42 @@ Complete model list and detailed parameter documentation.
 ---
 
 ## Detailed Command Parameters
+
+### pilot
+
+Smart model selector — auto-picks the best model for your task. **Use this first for any AI task.**
+
+```bash
+node ./skillboss/scripts/api-hub.js pilot [options]
+```
+
+| Option          | Required | Description                                                        |
+| --------------- | -------- | ------------------------------------------------------------------ |
+| `--discover`    | No       | Browse available model types and search models                     |
+| `--keyword`     | No       | Search models by keyword (use with `--discover`)                   |
+| `--type`        | No       | Model type: chat, image, video, tts, stt, music, etc.             |
+| `--capability`  | No       | Semantic capability matching (e.g., "style transfer")              |
+| `--prefer`      | No       | Optimization: "price" / "quality" / "balanced" (default)           |
+| `--limit`       | No       | Max models to return (default: 3)                                  |
+| `--prompt`      | No       | Text prompt — triggers auto-execute with best model                |
+| `--text`        | No       | Text input for TTS — triggers auto-execute                         |
+| `--file`        | No       | Audio file path for STT — triggers auto-execute                    |
+| `--output`      | No       | Save result to file (image, video, music, tts)                     |
+| `--duration`    | No       | Duration in seconds (music, video)                                 |
+| `--voice-id`    | No       | Voice ID for TTS                                                   |
+| `--image`       | No       | Image URL for video/image tasks                                    |
+| `--size`        | No       | Image size                                                         |
+| `--system`      | No       | System prompt for chat                                             |
+| `--language`    | No       | Language code for STT                                              |
+| `--chain`       | No       | JSON array for multi-step workflow                                 |
+| `--include-docs`| No       | Include curl/request/response docs in recommendations              |
+
+**Modes:**
+- **Guide** (no args): Returns overview of all capabilities
+- **Discover** (`--discover`): Browse types or search by keyword
+- **Recommend** (`--type` only): Returns ranked models with documentation
+- **Execute** (`--type` + `--prompt`/`--text`/`--file`): Auto-selects best model and runs it
+- **Chain** (`--chain`): Plans multi-step workflow with model recommendations
 
 ### chat
 

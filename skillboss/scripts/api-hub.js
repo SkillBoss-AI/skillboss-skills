@@ -56,6 +56,7 @@ const { sendEmail, sendBatchEmails } = require('./commands/email')
 const { smsVerify, smsCheck, smsSend } = require('./commands/sms')
 const { gamma, document } = require('./commands/document')
 const { music } = require('./commands/music')
+const { pilot } = require('./commands/pilot')
 const { listModels } = require('./commands/models')
 
 // CLI argument parsing
@@ -89,29 +90,31 @@ async function main() {
 SkillBoss API Hub - Multi-Provider API Gateway
 
 Commands:
-  list-models  List available models from API Hub
-  run          Generic endpoint access (any model)
-  chat         Chat completions (bedrock, openai, anthropic, openrouter, vertex, minimax, huggingface)
-  tts          Text-to-speech (elevenlabs, minimax, openai, mm/qwen3-tts-flash)
-  stt          Speech-to-text (openai/whisper-1, huggingface/openai/whisper-large-v3)
-  image        Image generation (vertex/gemini, replicate/flux, mm/img)
-  upscale      Image upscaling (fal/upscale)
-  img2img      Image-to-image transformation (fal/img2img)
-  multimodal   Video/image/audio understanding (mm/qwen3-vl-plus, mm/qwen3-vl-max)
-  search       Web search (scrapingdog, perplexity)
-  linkup-search Structured web search (linkup: searchResults, sourcedAnswer, structured)
-  linkup-fetch  URL-to-markdown fetcher (linkup)
-  scrape       Web scraping (scrapingdog, firecrawl)
-  video        Video generation (minimax, vertex/veo, mm/t2v, mm/i2v)
-  music        Music generation (replicate/elevenlabs/music, replicate/meta/musicgen)
-  document     Document processing (reducto: parse, extract, split, edit)
-  gamma        Presentations (gamma)
-  sms-verify   Send OTP verification code (prelude)
-  sms-check    Check OTP verification code (prelude)
-  sms-send     Send SMS notification (prelude)
-  send-email   Send a single email (aws/ses)
+  pilot        Smart model selector — auto-picks the best model for your task (RECOMMENDED)
+
+  run          Run a specific model by ID
+  chat         Chat completions
+  image        Image generation
+  upscale      Image upscaling
+  img2img      Image-to-image transformation
+  video        Video generation
+  music        Music generation
+  tts          Text-to-speech
+  stt          Speech-to-text
+  multimodal   Video/image/audio understanding
+  search       Web search
+  linkup-search Structured web search
+  linkup-fetch  URL-to-markdown fetcher
+  scrape       Web scraping
+  document     Document processing
+  gamma        Presentations
+  sms-verify   Send OTP verification code
+  sms-check    Check OTP verification code
+  sms-send     Send SMS notification
+  send-email   Send a single email
   send-batch   Send batch emails with templates
-  version      Check for updates and show current/latest version
+  version      Check for updates
+  list-models  List available models from API Hub
 
 Common Options:
   --model        Model in "vendor/model" format (required for most commands)
@@ -119,81 +122,23 @@ Common Options:
   --output       Save response to file (tts, image, video)
   --no-fallback  Disable automatic fallback on errors (fallback is enabled by default)
 
-Examples:
-  # Generic run
-  node api-hub.js run --model "scrapingdog/google_search" --inputs '{"q":"test"}'
+Pilot Examples (recommended — auto-selects best model for your task):
+  node api-hub.js pilot                                                          # See all capabilities
+  node api-hub.js pilot --discover                                               # Browse available model types
+  node api-hub.js pilot --discover --keyword "CEO"                               # Search models by keyword
+  node api-hub.js pilot --type image --prefer price --limit 3                    # Get model recommendations
+  node api-hub.js pilot --type image --prompt "A sunset" --output sunset.png     # Generate image (auto-select)
+  node api-hub.js pilot --type chat --prompt "Explain quantum computing"         # Chat (auto-select)
+  node api-hub.js pilot --type tts --text "Hello world" --output hello.mp3       # Text-to-speech (auto-select)
+  node api-hub.js pilot --type stt --file recording.m4a                          # Speech-to-text (auto-select)
+  node api-hub.js pilot --type music --prompt "upbeat" --duration 30 --output track.mp3  # Music (auto-select)
+  node api-hub.js pilot --type video --prompt "A cat playing" --output video.mp4         # Video (auto-select)
 
-  # Chat
-  node api-hub.js chat --model "bedrock/claude-4-sonnet" --prompt "Hello"
-  node api-hub.js chat --model "openrouter/deepseek/deepseek-r1" --prompt "Hello" --stream
-  node api-hub.js chat --model "huggingface/meta-llama/Llama-3.1-8B-Instruct" --prompt "Hello"
-
-  # HuggingFace (any model from huggingface.co/models works)
-  node api-hub.js chat --model "huggingface/zai-org/GLM-5" --prompt "Hello" --stream
-  node api-hub.js run --model "huggingface/BAAI/bge-small-en-v1.5" --inputs '{"task":"embedding","input":"hello world"}'
-  node api-hub.js run --model "huggingface/stabilityai/stable-diffusion-xl-base-1.0" --inputs '{"task":"image","prompt":"a sunset"}' --output /tmp/image.png
-
-  # TTS
-  node api-hub.js tts --model "elevenlabs/eleven_multilingual_v2" --text "Hello" --output /tmp/audio.mp3
-  node api-hub.js tts --model "mm/qwen3-tts-flash" --text "Hello" --output /tmp/audio.wav
-
-  # STT (Speech-to-Text)
-  node api-hub.js stt --file recording.mp3
-  node api-hub.js stt --file interview.wav --language en --output /tmp/transcript.txt
-
-  # Multimodal (video/image understanding)
-  node api-hub.js multimodal --model "mm/qwen3-vl-plus" --video "https://example.com/video.mp4" --prompt "What's happening in this video?"
-  node api-hub.js multimodal --model "mm/qwen3-vl-max" --image "https://example.com/image.jpg" --prompt "Describe this image"
-
-  # Image (default: mm/img)
+Direct Model Calls (when you already have a model ID):
+  node api-hub.js chat --model MODEL_ID --prompt "Hello"
   node api-hub.js image --prompt "A sunset" --output image.png
-  node api-hub.js image --model "vertex/gemini-3-pro-image-preview" --prompt "A sunset"
-  node api-hub.js image --prompt "A sunset" --size "1024*1536" --output image.png
-
-  # Upscale (FAL)
-  node api-hub.js upscale --image-url "https://example.com/photo.jpg" --output upscaled.png
-  node api-hub.js upscale --image-url "https://example.com/photo.jpg" --scale 4 --output upscaled.png
-
-  # Image-to-Image (FAL FLUX dev)
-  node api-hub.js img2img --image-url "https://example.com/photo.jpg" --prompt "watercolor painting" --output result.jpg
-  node api-hub.js img2img --image-url "https://example.com/photo.jpg" --prompt "oil painting" --strength 0.9 --output result.jpg
-
-  # Video (default: mm/t2v for text-to-video, mm/i2v for image-to-video)
-  node api-hub.js video --prompt "A cat walking" --duration 5 --output video.mp4
-  node api-hub.js video --prompt "Animate this" --image "https://example.com/cat.jpg" --duration 5 --output video.mp4
-  node api-hub.js video --model "vertex/veo-3.1-fast-generate-preview" --prompt "A sunset" --output video.mp4
-
-  # Music (default: replicate/elevenlabs/music)
-  node api-hub.js music --prompt "upbeat electronic dance track" --output music.mp3
-  node api-hub.js music --model "replicate/meta/musicgen" --prompt "calm acoustic guitar" --duration 30
-
-  # Document Processing
-  node api-hub.js document --model "reducto/parse" --url "https://example.com/doc.pdf"
-  node api-hub.js document --model "reducto/extract" --url "https://example.com/doc.pdf" --schema '{"type":"object","properties":{"title":{"type":"string"}}}'
-
-  # Search & Scrape
-  node api-hub.js search --model "scrapingdog/google_search" --query "nodejs"
-  node api-hub.js scrape --model "firecrawl/scrape" --url "https://example.com"
-
-  # Linkup (structured search + URL fetch)
-  node api-hub.js linkup-search --query "latest AI news"
-  node api-hub.js linkup-search --query "population of Tokyo" --output-type structured --schema '{"type":"object","properties":{"city":{"type":"string"},"population":{"type":"number"}}}'
-  node api-hub.js linkup-search --query "compare React vs Vue" --output-type sourcedAnswer --depth deep
-  node api-hub.js linkup-fetch --url "https://example.com"
-  node api-hub.js linkup-fetch --url "https://example.com" --render-js
-
-  # SMS Verification
-  node api-hub.js sms-verify --phone "+1234567890"
-  node api-hub.js sms-check --phone "+1234567890" --code "123456"
-  node api-hub.js sms-send --phone "+1234567890" --template-id "your_template_id"
-
-  # Email
-  node api-hub.js send-email --to "user@example.com" --subject "Hello" --body "<p>Hi!</p>"
-
-  # List Models
-  node api-hub.js list-models
+  node api-hub.js run --model MODEL_ID --inputs '{"key":"value"}'
   node api-hub.js list-models --type chat
-  node api-hub.js list-models --vendor openai
 `)
     process.exit(0)
   }
@@ -202,6 +147,90 @@ Examples:
     let result
 
     switch (command) {
+      case 'pilot': {
+        result = await pilot(args)
+
+        switch (result.mode) {
+          case 'guide':
+            console.log(JSON.stringify(result.data, null, 2))
+            break
+
+          case 'discover': {
+            const d = result.data
+            if (d.types) {
+              console.log('\nAvailable types:')
+              for (const t of d.types) {
+                console.log(`  ${t}`)
+              }
+            }
+            if (d.matches) {
+              console.log('\nMatches:')
+              for (const m of d.matches) {
+                console.log(`  ${m.id || m.model} — ${m.display_name || m.name || ''}`)
+              }
+            }
+            if (!d.types && !d.matches) {
+              console.log(JSON.stringify(d, null, 2))
+            }
+            break
+          }
+
+          case 'recommend': {
+            const r = result.data
+            if (r.models) {
+              console.log(`\nRecommended models for type "${args.type}":`)
+              for (const m of r.models) {
+                const score = m.score ? ` (score: ${m.score})` : ''
+                console.log(`  ${m.id || m.model}${score}`)
+                if (m.display_name) console.log(`    ${m.display_name}`)
+              }
+            } else {
+              console.log(JSON.stringify(r, null, 2))
+            }
+            break
+          }
+
+          case 'execute': {
+            if (result.saved) {
+              console.log(`Saved to: ${result.saved}`)
+            } else {
+              const d = result.data
+              // Try to extract text content
+              const text =
+                d.choices?.[0]?.message?.content ||
+                d.content?.[0]?.text ||
+                d.text ||
+                d.message?.content
+              if (text) {
+                console.log(text)
+              } else {
+                console.log(JSON.stringify(d, null, 2))
+              }
+            }
+            break
+          }
+
+          case 'chain': {
+            const c = result.data
+            if (c.steps) {
+              console.log('\nWorkflow steps:')
+              for (let i = 0; i < c.steps.length; i++) {
+                const step = c.steps[i]
+                console.log(`  Step ${i + 1}: ${step.type} → ${step.model || step.id || '(auto)'}`)
+                if (step.pipe_hint) console.log(`    Pipe: ${step.pipe_hint}`)
+              }
+            } else {
+              console.log(JSON.stringify(c, null, 2))
+            }
+            break
+          }
+
+          default:
+            console.log(JSON.stringify(result.data, null, 2))
+        }
+        break
+      }
+
       case 'list-models': {
         result = await listModels({
           type: args.type,
@@ -740,6 +769,9 @@ if (process.argv[1]?.endsWith('api-hub.js')) {
 
 // Export for module usage
 module.exports = {
+  // Smart model selector
+  pilot,
+
   // High-level commands
   run,
   chat,

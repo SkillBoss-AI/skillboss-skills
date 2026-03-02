@@ -27,127 +27,137 @@ Use this skill when the user wants to:
 - **Scrape/search web**: Extract data with Firecrawl, Perplexity, ScrapingDog
 - **CEO interviews & quotes**: Search verified CEO/executive conversation transcripts and notable quotes (CEOinterviews)
 
-## Quick Start
+## How to Call Any AI Model (Start Here)
 
-These examples assume you are in your AI tool's skills directory (the folder containing `skillboss/`). If inside `skillboss/`, drop the `skillboss/` prefix.
+**ALWAYS use the `pilot` command.** It auto-selects the best model and uses the same CLI syntax as other commands.
 
-### Chat with AI models:
+**Setup:** Read `config.json` in this skill's directory for `apiKey` and `baseUrl`.
+
+### Step 1 — Discover what's available:
 ```bash
-node ./skillboss/scripts/api-hub.js chat --model "bedrock/claude-4-6-opus" --prompt "Solve this complex reasoning problem"
-node ./skillboss/scripts/api-hub.js chat --model "bedrock/claude-4-5-sonnet" --prompt "Explain quantum computing"
-node ./skillboss/scripts/api-hub.js chat --model "openai/gpt-5" --prompt "Write a haiku" --stream
+node ./skillboss/scripts/api-hub.js pilot --discover
+```
+Returns all available model types (chat, image, video, tts, stt, music, etc.).
+
+### Step 2 — Search by keyword:
+```bash
+node ./skillboss/scripts/api-hub.js pilot --discover --keyword "CEO"
 ```
 
-### HuggingFace (any model from huggingface.co/models):
+### Step 3 — Get recommendations:
 ```bash
-# Chat - any text-generation model works
-node ./skillboss/scripts/api-hub.js chat --model "huggingface/meta-llama/Llama-3.1-8B-Instruct" --prompt "Hello"
-node ./skillboss/scripts/api-hub.js chat --model "huggingface/zai-org/GLM-5" --prompt "Hello" --stream
+node ./skillboss/scripts/api-hub.js pilot --type image --prefer price --limit 3
+```
+Returns ranked models with documentation.
 
-# Other tasks via /run with task parameter
-node ./skillboss/scripts/api-hub.js run --model "huggingface/BAAI/bge-small-en-v1.5" --inputs '{"task":"embedding","input":"hello world"}'
-node ./skillboss/scripts/api-hub.js run --model "huggingface/stabilityai/stable-diffusion-xl-base-1.0" --inputs '{"inputs":"a sunset"}' --output /tmp/image.png
-node ./skillboss/scripts/api-hub.js stt --file recording.mp3 --model "huggingface/openai/whisper-large-v3"
+### Step 4 — Execute (auto-select best model):
+```bash
+node ./skillboss/scripts/api-hub.js pilot --type image --prompt "A sunset over mountains" --output sunset.png
+node ./skillboss/scripts/api-hub.js pilot --type chat --prompt "Explain quantum computing"
+node ./skillboss/scripts/api-hub.js pilot --type tts --text "Hello world" --output hello.mp3
+node ./skillboss/scripts/api-hub.js pilot --type stt --file recording.m4a
+node ./skillboss/scripts/api-hub.js pilot --type music --prompt "upbeat electronic" --duration 30 --output track.mp3
+node ./skillboss/scripts/api-hub.js pilot --type video --prompt "A cat playing" --output video.mp4
 ```
 
-### Generate images:
+### Multi-step workflow:
 ```bash
-node ./skillboss/scripts/api-hub.js image --prompt "A sunset over mountains"
-# Uses mm/img by default. To save locally:
-node ./skillboss/scripts/api-hub.js image --prompt "A sunset over mountains" --output /tmp/sunset.png
+node ./skillboss/scripts/api-hub.js pilot --chain '[{"type":"stt","prefer":"price"},{"type":"chat","capability":"summarize"}]'
 ```
 
-### Upscale images (FAL):
+### Pilot Flags:
+| Flag | Description |
+|------|-------------|
+| `--discover` | Browse available types and models |
+| `--keyword X` | Search models by keyword (with --discover) |
+| `--type X` | Model type: chat, image, video, tts, stt, music, etc. |
+| `--capability X` | Semantic capability matching (e.g., "style transfer") |
+| `--prefer X` | Optimization: "price" / "quality" / "balanced" (default) |
+| `--limit N` | Max models to return (default: 3) |
+| `--prompt X` | Text prompt (triggers auto-execute) |
+| `--text X` | Text input for TTS (triggers auto-execute) |
+| `--file X` | Audio file for STT (triggers auto-execute) |
+| `--output X` | Save result to file |
+| `--duration N` | Duration in seconds (music, video) |
+| `--voice-id X` | Voice ID for TTS |
+| `--image X` | Image URL for video/image tasks |
+| `--size X` | Image size |
+| `--system X` | System prompt for chat |
+| `--chain '[...]'` | Multi-step workflow definition |
+
+### Decision Flow:
+1. **Any AI task** → Use `pilot` — it auto-selects the best model
+2. **Multi-step task** → Use `pilot --chain` — it plans the workflow
+3. **Already have a model ID from pilot recommendations?** → Use direct commands (see below)
+
+## Direct Model Calls (Advanced)
+
+> **Use `pilot` first (above).** These commands are for when you already have a model ID from pilot's recommendations.
+
+These examples assume you are in your AI tool's skills directory (the folder containing `skillboss/`).
+
+### Chat:
 ```bash
-node ./skillboss/scripts/api-hub.js upscale --image-url "https://example.com/photo.jpg" --output /tmp/upscaled.png
-node ./skillboss/scripts/api-hub.js upscale --image-url "https://example.com/photo.jpg" --scale 4 --output /tmp/upscaled.png
+node ./skillboss/scripts/api-hub.js chat --model MODEL_ID --prompt "Hello" --stream
 ```
 
-### Image-to-image (FAL FLUX dev):
+### Image:
 ```bash
-node ./skillboss/scripts/api-hub.js img2img --image-url "https://example.com/photo.jpg" --prompt "watercolor painting" --output /tmp/result.jpg
+node ./skillboss/scripts/api-hub.js image --prompt "A sunset" --output /tmp/sunset.png
 ```
 
-### Generate videos:
+### Video:
 ```bash
-# Text-to-video (uses mm/t2v by default)
-node ./skillboss/scripts/api-hub.js video --prompt "A cat playing with a ball" --output /tmp/cat.mp4
-
-# Image-to-video (uses mm/i2v when --image provided)
-node ./skillboss/scripts/api-hub.js video --prompt "Animate this scene" --image "https://example.com/image.png" --output /tmp/animated.mp4
+node ./skillboss/scripts/api-hub.js video --prompt "A cat playing" --output /tmp/cat.mp4
 ```
 
-### Parse documents:
+### Music:
 ```bash
-node ./skillboss/scripts/api-hub.js document --model "reducto/parse" --url "https://example.com/doc.pdf"
-node ./skillboss/scripts/api-hub.js document --model "reducto/extract" --url "https://example.com/doc.pdf" --schema '{"type":"object","properties":{"title":{"type":"string","description":"Document title"}}}'
+node ./skillboss/scripts/api-hub.js music --prompt "upbeat electronic" --output /tmp/music.mp3
 ```
 
-### Text-to-speech:
+### TTS:
 ```bash
-node ./skillboss/scripts/api-hub.js tts --model "minimax/speech-01-turbo" --text "Hello world" --output /tmp/hello.mp3
+node ./skillboss/scripts/api-hub.js tts --model MODEL_ID --text "Hello" --output /tmp/hello.mp3
 ```
 
-### Speech-to-text:
+### STT:
 ```bash
 node ./skillboss/scripts/api-hub.js stt --file recording.mp3
-node ./skillboss/scripts/api-hub.js stt --file interview.wav --language en --output /tmp/transcript.txt
 ```
 
-### SMS verification (OTP):
+### Upscale / Img2Img:
 ```bash
-# Step 1: Send OTP code to phone number
-node ./skillboss/scripts/api-hub.js sms-verify --phone "+1234567890"
-
-# Step 2: Check the code (after user receives it)
-node ./skillboss/scripts/api-hub.js sms-check --phone "+1234567890" --code "123456"
+node ./skillboss/scripts/api-hub.js upscale --image-url "https://example.com/photo.jpg" --output /tmp/upscaled.png
+node ./skillboss/scripts/api-hub.js img2img --image-url "https://example.com/photo.jpg" --prompt "watercolor" --output /tmp/result.jpg
 ```
 
-### Send SMS notification:
+### Document processing:
 ```bash
-node ./skillboss/scripts/api-hub.js sms-send --phone "+1234567890" --template-id "your_template_id"
+node ./skillboss/scripts/api-hub.js document --model MODEL_ID --url "https://example.com/doc.pdf"
 ```
 
-### Generate music:
-```bash
-node ./skillboss/scripts/api-hub.js music --prompt "upbeat electronic dance track"
-
-node ./skillboss/scripts/api-hub.js music --prompt "calm acoustic guitar" --output /tmp/guitar.mp3
-
-# With specific model:
-node ./skillboss/scripts/api-hub.js music --model "replicate/meta/musicgen" --prompt "epic orchestral soundtrack" --duration 60
-```
-
-### CEO interviews & quotes:
-```bash
-node ./skillboss/scripts/api-hub.js run --model "ceointerviews/get_feed" --inputs '{"entity_name":"Tim Cook","page_size":5}'
-node ./skillboss/scripts/api-hub.js run --model "ceointerviews/get_quotes" --inputs '{"entity_name":"Elon Musk","is_notable":true,"page_size":5}'
-```
-
-### Linkup web search:
+### Search / Scrape / Linkup:
 ```bash
 node ./skillboss/scripts/api-hub.js linkup-search --query "latest AI news"
-node ./skillboss/scripts/api-hub.js linkup-search --query "compare React vs Vue" --output-type sourcedAnswer --depth deep
 node ./skillboss/scripts/api-hub.js linkup-fetch --url "https://example.com"
 ```
 
-### Send email:
+### SMS / Email:
 ```bash
-node ./skillboss/scripts/api-hub.js send-email --to "user@example.com" --subject "Hello" --body "<p>Hi there!</p>"
+node ./skillboss/scripts/api-hub.js sms-verify --phone "+1234567890"
+node ./skillboss/scripts/api-hub.js send-email --to "user@example.com" --subject "Hello" --body "<p>Hi!</p>"
 ```
 
-### Publish static files:
+### Generic run:
+```bash
+node ./skillboss/scripts/api-hub.js run --model MODEL_ID --inputs '{"key":"value"}'
+```
+
+### Deploy:
 ```bash
 node ./skillboss/scripts/serve-build.js publish-static ./dist
-```
-
-### Deploy Cloudflare Worker:
-```bash
 node ./skillboss/scripts/serve-build.js publish-worker ./worker
-```
-
-### Connect Stripe for payments:
-```bash
 node ./skillboss/scripts/stripe-connect.js
 ```
 
@@ -155,53 +165,42 @@ node ./skillboss/scripts/stripe-connect.js
 
 | Command | Description | Key Options |
 |---------|-------------|-------------|
-| `chat` | Chat completions (model required) | `--model`, `--prompt`/`--messages`, `--system`, `--stream` |
-| `tts` | Text-to-speech (model required) | `--model`, `--text`, `--voice-id`, `--output` |
-| `stt` | Speech-to-text (default: `openai/whisper-1`) | `--file`, `--model`, `--prompt`, `--language`, `--output` |
-| `image` | Image generation (default: `mm/img`) | `--prompt`, `--size`, `--output`, `--model` |
-| `upscale` | Image upscaling (fal/upscale) | `--image-url`, `--scale`, `--output` |
-| `img2img` | Image-to-image transformation (fal/img2img) | `--image-url`, `--prompt`, `--strength`, `--output` |
-| `video` | Text-to-video (default: `mm/t2v`) or image-to-video (default: `mm/i2v` with `--image`) | `--prompt`, `--output`, `--image`, `--duration`, `--model` |
-| `music` | Music generation (default: `replicate/elevenlabs/music`) | `--prompt`, `--duration`, `--output`, `--model` |
-| `search` | Web search (model required) | `--model`, `--query` |
-| `linkup-search` | Structured web search (linkup) | `--query`, `--output-type`, `--depth` |
-| `linkup-fetch` | URL-to-markdown fetcher (linkup) | `--url`, `--render-js` |
-| `scrape` | Web scraping (model required) | `--model`, `--url`/`--urls` |
-| `document` | Document processing (model required) | `--model`, `--url`, `--schema`, `--split-description`, `--instructions`, `--output` |
-| `gamma` | Presentations | `--model`, `--input-text`, `--format` (presentation/document/social/webpage) |
-| `sms-verify` | Send OTP verification code | `--phone` (E.164), `--ip`, `--device-id` |
-| `sms-check` | Check OTP verification code | `--phone` (E.164), `--code` |
-| `sms-send` | Send SMS notification | `--phone` (E.164), `--template-id`, `--variables`, `--from` |
-| `send-email` | Single email | `--to`, `--subject`, `--body`, `--reply-to` |
+| **`pilot`** | **Smart model selector — auto-picks best model (RECOMMENDED)** | `--type`, `--prompt`/`--text`/`--file`, `--discover`, `--prefer`, `--output` |
+| `chat` | Chat completions | `--model`, `--prompt`/`--messages`, `--system`, `--stream` |
+| `tts` | Text-to-speech | `--model`, `--text`, `--voice-id`, `--output` |
+| `stt` | Speech-to-text | `--file`, `--model`, `--language`, `--output` |
+| `image` | Image generation | `--prompt`, `--size`, `--output`, `--model` |
+| `upscale` | Image upscaling | `--image-url`, `--scale`, `--output` |
+| `img2img` | Image-to-image transformation | `--image-url`, `--prompt`, `--strength`, `--output` |
+| `video` | Video generation | `--prompt`, `--output`, `--image`, `--duration`, `--model` |
+| `music` | Music generation | `--prompt`, `--duration`, `--output`, `--model` |
+| `search` | Web search | `--model`, `--query` |
+| `linkup-search` | Structured web search | `--query`, `--output-type`, `--depth` |
+| `linkup-fetch` | URL-to-markdown fetcher | `--url`, `--render-js` |
+| `scrape` | Web scraping | `--model`, `--url`/`--urls` |
+| `document` | Document processing | `--model`, `--url`, `--schema`, `--output` |
+| `gamma` | Presentations | `--model`, `--input-text` |
+| `sms-verify` | Send OTP verification code | `--phone` |
+| `sms-check` | Check OTP verification code | `--phone`, `--code` |
+| `sms-send` | Send SMS notification | `--phone`, `--template-id` |
+| `send-email` | Single email | `--to`, `--subject`, `--body` |
 | `send-batch` | Batch emails | `--receivers`, `--subject`, `--body` |
-| `publish-static` | Publish to R2 | `<folder>`, `--project-id`, `--version` |
-| `publish-worker` | Deploy Worker | `<folder>`, `--main`, `--name`, `--project-id` |
-| `stripe-connect` | Connect Stripe | `--status`, `--no-browser` |
-| `run` | Generic endpoint | `--model`, `--inputs`, `--stream`, `--output` |
+| `publish-static` | Publish to R2 | `<folder>`, `--project-id` |
+| `publish-worker` | Deploy Worker | `<folder>`, `--main`, `--name` |
+| `stripe-connect` | Connect Stripe | `--status` |
+| `run` | Generic endpoint (any model by ID) | `--model`, `--inputs`, `--stream`, `--output` |
+| `list-models` | List available models | `--type`, `--vendor` |
 | `version` | Check for updates | (none) |
 
-## Popular Models
+## Discover Models
 
-| Category | Models |
-|----------|--------|
-| Chat | `bedrock/claude-4-6-opus`, `bedrock/claude-4-5-sonnet`, `openai/gpt-5`, `openrouter/deepseek/deepseek-r1`, `vertex/gemini-2.5-flash`, `huggingface/{any-model}` |
-| TTS | `minimax/speech-01-turbo`, `elevenlabs/eleven_multilingual_v2` |
-| STT | `openai/whisper-1`, `huggingface/openai/whisper-large-v3` |
-| Image | `mm/img`, `vertex/gemini-3-pro-image-preview`, `replicate/black-forest-labs/flux-schnell`, `huggingface/stabilityai/stable-diffusion-xl-base-1.0` |
-| Embedding | `huggingface/BAAI/bge-small-en-v1.5`, `huggingface/{any-embedding-model}` |
-| Upscale | `fal/upscale` (creative-upscaler) |
-| Img2Img | `fal/img2img` (FLUX dev) |
-| Search | `perplexity/sonar-pro`, `scrapingdog/google_search`, `linkup/search`, `linkup/search-deep` |
-| Scrape | `firecrawl/scrape`, `firecrawl/extract`, `scrapingdog/screenshot` |
-| Fetch | `linkup/fetch` (URL-to-markdown) |
-| Video | `mm/t2v` (text-to-video), `mm/i2v` (image-to-video), `vertex/veo-3.1-fast-generate-preview` |
-| Music | `replicate/elevenlabs/music`, `replicate/meta/musicgen`, `replicate/google/lyria-2` |
-| Document | `reducto/parse`, `reducto/extract`, `reducto/split`, `reducto/edit` |
-| SMS/Verify | `prelude/verify-send`, `prelude/verify-check`, `prelude/notify-send`, `prelude/notify-batch` |
-| CEO Interviews | `ceointerviews/get_feed` (transcripts), `ceointerviews/get_quotes` (quotes) |
-| Presentation | `gamma/generation` |
+Use `pilot --discover` to browse all available models, or `pilot --discover --keyword "search term"` to search.
 
-For complete model list and detailed parameters, see `reference.md`.
+```bash
+node ./skillboss/scripts/api-hub.js pilot --discover
+node ./skillboss/scripts/api-hub.js pilot --discover --keyword "CEO"
+node ./skillboss/scripts/api-hub.js list-models --type chat
+```
 
 ## Email Examples
 
@@ -268,18 +267,11 @@ When you see: `Rate limited. Waiting Xs before retry...`
 
 The client handles this automatically. If all retries fail, consider:
 1. Waiting a few minutes and running again
-2. Switching to an alternative model:
-
-| Type | Primary Model | Fallback Models |
-|------|---------------|-----------------|
-| TTS | `minimax/speech-01-turbo` | `elevenlabs/eleven_multilingual_v2` |
-| Image | `mm/img` | `vertex/gemini-3-pro-image-preview` → `vertex/gemini-2.5-flash-image-preview` → `replicate/black-forest-labs/flux-schnell` |
-| Chat | `bedrock/claude-4-6-opus` | `bedrock/claude-4-5-sonnet` → `openai/gpt-5` → `vertex/gemini-2.5-flash` |
-| Search | `perplexity/sonar-pro` | `scrapingdog/google_search` |
-| Scrape | `firecrawl/scrape` | `firecrawl/extract` → `scrapingdog/screenshot` |
-| Video (text-to-video) | `mm/t2v` | `vertex/veo-3.1-fast-generate-preview` |
-| Video (image-to-video) | `mm/i2v` | - |
-| Document | `reducto/parse` | `reducto/extract` |
+2. Using `pilot` to auto-select an alternative model:
+```bash
+node ./skillboss/scripts/api-hub.js pilot --type TYPE --prefer price --prompt "..."
+```
+Pilot automatically routes to the best available model for your task type.
 
 ### Low Balance Warning
 When the API response contains a `_balance_warning` field (in JSON responses or as a final SSE chunk):
@@ -487,6 +479,10 @@ Every project uses **exactly one** deployment type. These are **mutually exclusi
 
 Common mistake: A Vite project with `index.ts` using Hono is ONE Worker deployment—not a static site plus a worker. The Worker serves both your API routes and your React app's static files.
 
+### Pilot API in Code
+
+To use Pilot in TypeScript/JavaScript apps, see the code examples in "Embedding API Hub in User Code" below. The Pilot endpoint is `POST ${API_BASE}/pilot`.
+
 ## Embedding API Hub in User Code
 
 When building apps that need AI capabilities (image generation, TTS, chat, etc.), you can integrate SkillBoss API Hub directly into the user's code.
@@ -517,7 +513,34 @@ const SKILLBOSS_API_KEY = process.env.SKILLBOSS_API_KEY
 const API_BASE = 'https://api.heybossai.com/v1'
 
 // ============================================================================
-// CHAT COMPLETION
+// PILOT — Smart Model Navigator (recommended starting point)
+// ============================================================================
+async function pilot(body: object): Promise<any> {
+  const response = await fetch(`${API_BASE}/pilot`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${SKILLBOSS_API_KEY}`
+    },
+    body: JSON.stringify(body)
+  })
+  return response.json()
+}
+
+// Discover all types
+const types = await pilot({ discover: true })
+
+// Get ranked recommendations with docs
+const reco = await pilot({ type: 'image', prefer: 'price', limit: 3 })
+
+// One-shot execute (auto-select best model)
+const result = await pilot({ type: 'image', inputs: { prompt: 'A cat' } })
+
+// Multi-step workflow
+const chain = await pilot({ chain: [{ type: 'stt' }, { type: 'chat', capability: 'summarize' }] })
+
+// ============================================================================
+// CHAT COMPLETION (direct call — use when you know the exact model)
 // ============================================================================
 async function chat(prompt: string): Promise<string> {
   const response = await fetch(`${API_BASE}/run`, {
