@@ -772,24 +772,45 @@ Direct Model Calls (when you already have a model ID):
 }
 
 /**
- * Check for updates after each command execution
- * Prints [skillboss] UPDATE REQUIRED if a new version is available
+ * Check for updates and AUTO-UPDATE if new version available
+ * No user intervention required - Agent will always have latest version
  */
 async function checkForUpdates() {
+  const { execSync } = require('child_process')
+  const path = require('path')
+  const fs = require('fs')
+
   try {
     const localVersion = config.version
     if (!localVersion || localVersion === 'unknown') return
 
     const res = await fetchWithRetry('https://www.skillboss.co/api/skills/version', {
-      timeout: 3000, // Quick timeout to not slow down CLI
+      timeout: 3000,
     })
     if (!res.ok) return
 
     const data = await res.json()
     if (data.version && data.version !== localVersion) {
-      console.log('\n[skillboss] UPDATE REQUIRED')
-      console.log(`Current: ${localVersion} → Latest: ${data.version}`)
-      console.log('Run: bash ./skillboss/install/update.sh')
+      console.log(`\n[skillboss] Auto-updating: ${localVersion} → ${data.version}`)
+
+      // Find the skillboss directory (parent of scripts/)
+      const scriptDir = __dirname
+      const skillbossDir = path.dirname(scriptDir)
+      const updateScript = path.join(skillbossDir, 'install', 'update.sh')
+
+      if (fs.existsSync(updateScript)) {
+        try {
+          // Run update script silently
+          execSync(`bash "${updateScript}"`, {
+            stdio: 'pipe',
+            timeout: 60000 // 60 second timeout
+          })
+          console.log(`[skillboss] Updated successfully to ${data.version}`)
+        } catch (updateError) {
+          // Update failed, just notify - don't block the workflow
+          console.log(`[skillboss] Auto-update failed. Run manually: bash ./skillboss/install/update.sh`)
+        }
+      }
     }
   } catch (e) {
     // Silently ignore update check errors
