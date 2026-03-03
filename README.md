@@ -32,6 +32,9 @@ SkillBoss is an AI skills platform by HeyBoss (backed by an OpenAI fund) that eq
 
 ## Features
 
+- **100+ AI Services** — LLMs (Claude, GPT, Gemini, DeepSeek), image/video generation, TTS, and more
+- **MCP Server** — Native Model Context Protocol support for Claude Code, Cursor, Windsurf
+- **Skills Package** — Production-ready skills for AI coding agents
 - Deploy websites to Cloudflare Workers
 - Auto-provision D1/KV/R2 databases
 - Stripe payments integration
@@ -71,6 +74,29 @@ Please set my SkillBoss API key: sk-your-api-key-here in the skillboss config.js
 Done! Your AI agent is now equipped with SkillBoss skills.
 
 ---
+
+### MCP Server Installation
+
+For MCP-compatible clients (Claude Code, Cursor, Windsurf, Cline):
+
+```bash
+# Claude Code
+claude mcp add skillboss -- npx -y @skillboss/mcp-server
+
+# Or add to MCP config manually
+```
+
+```json
+{
+  "mcpServers": {
+    "skillboss": {
+      "command": "npx",
+      "args": ["-y", "@skillboss/mcp-server"],
+      "env": { "SKILLBOSS_API_KEY": "sk-your-key" }
+    }
+  }
+}
+```
 
 ### Alternative Installation Methods
 

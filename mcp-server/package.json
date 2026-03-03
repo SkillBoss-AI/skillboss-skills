@@ -1,0 +1,58 @@
+{
+  "name": "@skillboss/mcp-server",
+  "version": "1.0.1",
+  "mcpName": "io.github.heeyo-life/skillboss",
+  "description": "SkillBoss MCP Server - Access 100+ AI models and services via Model Context Protocol",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "skillboss-mcp": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "ai",
+    "claude",
+    "gpt",
+    "gemini",
+    "skillboss",
+    "openai-compatible",
+    "claude-code",
+    "cursor",
+    "windsurf",
+    "ai-gateway",
+    "llm"
+  ],
+  "author": "SkillBoss <support@skillboss.co>",
+  "license": "MIT",
+  "homepage": "https://skillboss.co/docs/integrations/mcp-server",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heeyo-life/skillboss-skills.git",
+    "directory": "mcp-server"
+  },
+  "bugs": {
+    "url": "https://github.com/heeyo-life/skillboss-skills/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "openai": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {}
+}
