@@ -32,13 +32,13 @@ Generate 2-3 variations with different styles:
 
 ```bash
 # Variation 1: Primary style
-node ./skillboss/scripts/api-hub.js image \
+node ./scripts/api-hub.js image \
   --model "vertex/gemini-2.5-flash-image-preview" \
   --prompt "[YOUR_CRAFTED_PROMPT]" \
   --output /tmp/logo-v1.png
 
 # Variation 2: Alternative approach
-node ./skillboss/scripts/api-hub.js image \
+node ./scripts/api-hub.js image \
   --model "vertex/gemini-2.5-flash-image-preview" \
   --prompt "[MODIFIED_PROMPT_WITH_DIFFERENT_STYLE]" \
   --output /tmp/logo-v2.png
@@ -58,7 +58,7 @@ If `gemini-2.5-flash-image-preview` hits rate limit:
 
 ```bash
 # Fallback example
-node ./skillboss/scripts/api-hub.js image \
+node ./scripts/api-hub.js image \
   --model "vertex/gemini-3-pro-image-preview" \
   --prompt "[PROMPT]" \
   --output /tmp/logo-fallback.png

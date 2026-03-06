@@ -37,7 +37,7 @@ Save the optimized script to a text file:
 
 **For short content (< 5000 characters):**
 ```bash
-node ./skillboss/scripts/api-hub.js tts \
+node ./scripts/api-hub.js tts \
   --model "minimax/speech-01-turbo" \
   --text "$(cat /tmp/podcast-script.txt)" \
   --output /tmp/podcast-episode.mp3
@@ -46,19 +46,19 @@ node ./skillboss/scripts/api-hub.js tts \
 **For long content, split into segments:**
 ```bash
 # Generate intro
-node ./skillboss/scripts/api-hub.js tts \
+node ./scripts/api-hub.js tts \
   --model "minimax/speech-01-turbo" \
   --text "$(cat /tmp/intro.txt)" \
   --output /tmp/podcast-intro.mp3
 
 # Generate main content
-node ./skillboss/scripts/api-hub.js tts \
+node ./scripts/api-hub.js tts \
   --model "minimax/speech-01-turbo" \
   --text "$(cat /tmp/main.txt)" \
   --output /tmp/podcast-main.mp3
 
 # Generate outro
-node ./skillboss/scripts/api-hub.js tts \
+node ./scripts/api-hub.js tts \
   --model "minimax/speech-01-turbo" \
   --text "$(cat /tmp/outro.txt)" \
   --output /tmp/podcast-outro.mp3
@@ -79,7 +79,7 @@ If `minimax/speech-01-turbo` hits rate limit:
 
 ```bash
 # Fallback example
-node ./skillboss/scripts/api-hub.js tts \
+node ./scripts/api-hub.js tts \
   --model "elevenlabs/eleven_multilingual_v2" \
   --text "$(cat /tmp/script.txt)" \
   --output /tmp/podcast-fallback.mp3

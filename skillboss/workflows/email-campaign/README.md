@@ -35,7 +35,7 @@ As an AI assistant, YOU write the email content directly. No need to call chat A
 Always test before batch sending:
 
 ```bash
-node ./skillboss/scripts/api-hub.js send-email \
+node ./scripts/api-hub.js send-email \
   --to "your-test-email@example.com" \
   --subject "Test: [Your Subject Line]" \
   --body "<html><body>[YOUR_EMAIL_HTML]</body></html>"
@@ -46,7 +46,7 @@ node ./skillboss/scripts/api-hub.js send-email \
 Prepare receivers JSON with email and variables:
 
 ```bash
-node ./skillboss/scripts/api-hub.js send-batch \
+node ./scripts/api-hub.js send-batch \
   --subject "Hi {{name}}, [Subject Line]" \
   --body "<html><body><p>Hi {{name}},</p>[EMAIL_CONTENT]</body></html>" \
   --receivers '[

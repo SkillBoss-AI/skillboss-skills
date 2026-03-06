@@ -34,7 +34,7 @@ Use this skill when the user wants to:
 1. **Stop what you are doing**
 2. **Run the update command immediately:**
    ```bash
-   bash ./skillboss/install/update.sh
+   bash ./install/update.sh
    ```
    (Windows: `.\skillboss\install\update.ps1`)
 3. **Then re-run your original command**
@@ -43,7 +43,7 @@ This ensures you always have the latest models, features, and bug fixes. **Never
 
 You can also proactively check for updates at any time:
 ```bash
-node ./skillboss/scripts/api-hub.js version
+node ./scripts/api-hub.js version
 ```
 
 ## How to Call Any AI Model (Start Here)
@@ -54,34 +54,34 @@ node ./skillboss/scripts/api-hub.js version
 
 ### Step 1 — Discover what's available:
 ```bash
-node ./skillboss/scripts/api-hub.js pilot --discover
+node ./scripts/api-hub.js pilot --discover
 ```
 Returns all available model types (chat, image, video, tts, stt, music, etc.).
 
 ### Step 2 — Search by keyword:
 ```bash
-node ./skillboss/scripts/api-hub.js pilot --discover --keyword "CEO"
+node ./scripts/api-hub.js pilot --discover --keyword "CEO"
 ```
 
 ### Step 3 — Get recommendations:
 ```bash
-node ./skillboss/scripts/api-hub.js pilot --type image --prefer price --limit 3
+node ./scripts/api-hub.js pilot --type image --prefer price --limit 3
 ```
 Returns ranked models with documentation.
 
 ### Step 4 — Execute (auto-select best model):
 ```bash
-node ./skillboss/scripts/api-hub.js pilot --type image --prompt "A sunset over mountains" --output sunset.png
-node ./skillboss/scripts/api-hub.js pilot --type chat --prompt "Explain quantum computing"
-node ./skillboss/scripts/api-hub.js pilot --type tts --text "Hello world" --output hello.mp3
-node ./skillboss/scripts/api-hub.js pilot --type stt --file recording.m4a
-node ./skillboss/scripts/api-hub.js pilot --type music --prompt "upbeat electronic" --duration 30 --output track.mp3
-node ./skillboss/scripts/api-hub.js pilot --type video --prompt "A cat playing" --output video.mp4
+node ./scripts/api-hub.js pilot --type image --prompt "A sunset over mountains" --output sunset.png
+node ./scripts/api-hub.js pilot --type chat --prompt "Explain quantum computing"
+node ./scripts/api-hub.js pilot --type tts --text "Hello world" --output hello.mp3
+node ./scripts/api-hub.js pilot --type stt --file recording.m4a
+node ./scripts/api-hub.js pilot --type music --prompt "upbeat electronic" --duration 30 --output track.mp3
+node ./scripts/api-hub.js pilot --type video --prompt "A cat playing" --output video.mp4
 ```
 
 ### Multi-step workflow:
 ```bash
-node ./skillboss/scripts/api-hub.js pilot --chain '[{"type":"stt","prefer":"price"},{"type":"chat","capability":"summarize"}]'
+node ./scripts/api-hub.js pilot --chain '[{"type":"stt","prefer":"price"},{"type":"chat","capability":"summarize"}]'
 ```
 
 ### Pilot Flags:
@@ -117,67 +117,67 @@ These examples assume you are in your AI tool's skills directory (the folder con
 
 ### Chat:
 ```bash
-node ./skillboss/scripts/api-hub.js chat --model MODEL_ID --prompt "Hello" --stream
+node ./scripts/api-hub.js chat --model MODEL_ID --prompt "Hello" --stream
 ```
 
 ### Image:
 ```bash
-node ./skillboss/scripts/api-hub.js image --prompt "A sunset" --output /tmp/sunset.png
+node ./scripts/api-hub.js image --prompt "A sunset" --output /tmp/sunset.png
 ```
 
 ### Video:
 ```bash
-node ./skillboss/scripts/api-hub.js video --prompt "A cat playing" --output /tmp/cat.mp4
+node ./scripts/api-hub.js video --prompt "A cat playing" --output /tmp/cat.mp4
 ```
 
 ### Music:
 ```bash
-node ./skillboss/scripts/api-hub.js music --prompt "upbeat electronic" --output /tmp/music.mp3
+node ./scripts/api-hub.js music --prompt "upbeat electronic" --output /tmp/music.mp3
 ```
 
 ### TTS:
 ```bash
-node ./skillboss/scripts/api-hub.js tts --model MODEL_ID --text "Hello" --output /tmp/hello.mp3
+node ./scripts/api-hub.js tts --model MODEL_ID --text "Hello" --output /tmp/hello.mp3
 ```
 
 ### STT:
 ```bash
-node ./skillboss/scripts/api-hub.js stt --file recording.mp3
+node ./scripts/api-hub.js stt --file recording.mp3
 ```
 
 ### Upscale / Img2Img:
 ```bash
-node ./skillboss/scripts/api-hub.js upscale --image-url "https://example.com/photo.jpg" --output /tmp/upscaled.png
-node ./skillboss/scripts/api-hub.js img2img --image-url "https://example.com/photo.jpg" --prompt "watercolor" --output /tmp/result.jpg
+node ./scripts/api-hub.js upscale --image-url "https://example.com/photo.jpg" --output /tmp/upscaled.png
+node ./scripts/api-hub.js img2img --image-url "https://example.com/photo.jpg" --prompt "watercolor" --output /tmp/result.jpg
 ```
 
 ### Document processing:
 ```bash
-node ./skillboss/scripts/api-hub.js document --model MODEL_ID --url "https://example.com/doc.pdf"
+node ./scripts/api-hub.js document --model MODEL_ID --url "https://example.com/doc.pdf"
 ```
 
 ### Search / Scrape / Linkup:
 ```bash
-node ./skillboss/scripts/api-hub.js linkup-search --query "latest AI news"
-node ./skillboss/scripts/api-hub.js linkup-fetch --url "https://example.com"
+node ./scripts/api-hub.js linkup-search --query "latest AI news"
+node ./scripts/api-hub.js linkup-fetch --url "https://example.com"
 ```
 
 ### SMS / Email:
 ```bash
-node ./skillboss/scripts/api-hub.js sms-verify --phone "+1234567890"
-node ./skillboss/scripts/api-hub.js send-email --to "user@example.com" --subject "Hello" --body "<p>Hi!</p>"
+node ./scripts/api-hub.js sms-verify --phone "+1234567890"
+node ./scripts/api-hub.js send-email --to "user@example.com" --subject "Hello" --body "<p>Hi!</p>"
 ```
 
 ### Generic run:
 ```bash
-node ./skillboss/scripts/api-hub.js run --model MODEL_ID --inputs '{"key":"value"}'
+node ./scripts/api-hub.js run --model MODEL_ID --inputs '{"key":"value"}'
 ```
 
 ### Deploy:
 ```bash
-node ./skillboss/scripts/serve-build.js publish-static ./dist
-node ./skillboss/scripts/serve-build.js publish-worker ./worker
-node ./skillboss/scripts/stripe-connect.js
+node ./scripts/serve-build.js publish-static ./dist
+node ./scripts/serve-build.js publish-worker ./worker
+node ./scripts/stripe-connect.js
 ```
 
 ## Commands Reference
@@ -216,21 +216,21 @@ node ./skillboss/scripts/stripe-connect.js
 Use `pilot --discover` to browse all available models, or `pilot --discover --keyword "search term"` to search.
 
 ```bash
-node ./skillboss/scripts/api-hub.js pilot --discover
-node ./skillboss/scripts/api-hub.js pilot --discover --keyword "CEO"
-node ./skillboss/scripts/api-hub.js list-models --type chat
+node ./scripts/api-hub.js pilot --discover
+node ./scripts/api-hub.js pilot --discover --keyword "CEO"
+node ./scripts/api-hub.js list-models --type chat
 ```
 
 ## Email Examples
 
 ### Single email:
 ```bash
-node ./skillboss/scripts/api-hub.js send-email --to "a@b.com,c@d.com" --subject "Update" --body "<p>Content here</p>"
+node ./scripts/api-hub.js send-email --to "a@b.com,c@d.com" --subject "Update" --body "<p>Content here</p>"
 ```
 
 ### Batch with templates:
 ```bash
-node ./skillboss/scripts/api-hub.js send-batch \
+node ./scripts/api-hub.js send-batch \
   --subject "Hi {{name}}" \
   --body "<p>Hello {{name}}, order #{{order_id}} ready.</p>" \
   --receivers '[{"email":"alice@b.com","variables":{"name":"Alice","order_id":"123"}}]'
@@ -238,14 +238,14 @@ node ./skillboss/scripts/api-hub.js send-batch \
 
 ## Configuration
 
-Reads from `./skillboss/config.json`. Email sender auto-determined from user lookup (`name@name.skillboss.live`).
+Reads from `./config.json`. Email sender auto-determined from user lookup (`name@name.skillboss.live`).
 
 ## Version Check
 
 Check if you're running the latest version:
 
 ```bash
-node ./skillboss/scripts/api-hub.js version
+node ./scripts/api-hub.js version
 ```
 
 This will show your current version, the latest available version, and the changelog if an update is available. **Run this command periodically** to stay up-to-date with new features and bug fixes.
@@ -256,7 +256,7 @@ To update to the latest version, run the update script from your skillboss direc
 
 **macOS/Linux:**
 ```bash
-bash ./skillboss/install/update.sh
+bash ./install/update.sh
 ```
 
 **Windows (PowerShell):**
@@ -288,7 +288,7 @@ The client handles this automatically. If all retries fail, consider:
 1. Waiting a few minutes and running again
 2. Using `pilot` to auto-select an alternative model:
 ```bash
-node ./skillboss/scripts/api-hub.js pilot --type TYPE --prefer price --prompt "..."
+node ./scripts/api-hub.js pilot --type TYPE --prefer price --prompt "..."
 ```
 Pilot automatically routes to the best available model for your task type.
 
@@ -361,13 +361,13 @@ SkillBoss includes workflow guides for common tasks. Read the corresponding guid
 
 | Workflow | Guide | Use When |
 |----------|-------|----------|
-| Logo Design | `./skillboss/workflows/logo-maker/README.md` | Design logo, brand icons, app icons |
-| Website Building | `./skillboss/workflows/website-builder/README.md` | Build landing page and deploy |
-| Podcast Creation | `./skillboss/workflows/podcast-maker/README.md` | Convert article to podcast |
-| Email Campaign | `./skillboss/workflows/email-campaign/README.md` | Send batch marketing emails |
-| Content Creation | `./skillboss/workflows/content-creator/README.md` | Create videos, graphics content |
-| Login Integration | `./skillboss/workflows/login-integration/README.md` | Add authentication to React apps |
-| E-Commerce | `./skillboss/workflows/ecommerce/README.md` | Add Stripe payments to site |
+| Logo Design | `./workflows/logo-maker/README.md` | Design logo, brand icons, app icons |
+| Website Building | `./workflows/website-builder/README.md` | Build landing page and deploy |
+| Podcast Creation | `./workflows/podcast-maker/README.md` | Convert article to podcast |
+| Email Campaign | `./workflows/email-campaign/README.md` | Send batch marketing emails |
+| Content Creation | `./workflows/content-creator/README.md` | Create videos, graphics content |
+| Login Integration | `./workflows/login-integration/README.md` | Add authentication to React apps |
+| E-Commerce | `./workflows/ecommerce/README.md` | Add Stripe payments to site |
 
 > 💰 **Monthly Cost:** Adding login integration costs 50 credits/month ($2.50/month) per project.
 
@@ -379,7 +379,7 @@ Optional third-party skills that extend SkillBoss capabilities:
 
 | Extension | Guide | Use When |
 |-----------|-------|----------|
-| Remotion | `./skillboss/extensions/remotion/EXTENSION_SKILL.md` | Develop video apps with React (Remotion framework) |
+| Remotion | `./extensions/remotion/EXTENSION_SKILL.md` | Develop video apps with React (Remotion framework) |
 
 **How to use:** When the user wants to build video applications using code (not AI-generated videos), read the Remotion extension's SKILL.md. Note: SkillBoss's video generation (`vertex/veo-*`) creates AI-generated videos; Remotion is for programmatic video creation with React.
 
@@ -410,7 +410,7 @@ HeyBoss Dashboard (Product Management)
 ### 1. Connect Stripe (one-time setup)
 
 ```bash
-node ./skillboss/scripts/stripe-connect.js
+node ./scripts/stripe-connect.js
 ```
 
 This opens your browser to complete Stripe Express account onboarding. Required for accepting payments.
@@ -428,7 +428,7 @@ See `workflows/ecommerce/README.md` for full API documentation.
 
 Use the e-commerce template:
 ```bash
-cp -r ./skillboss/templates/worker-ecommerce ./my-store
+cp -r ./templates/worker-ecommerce ./my-store
 ```
 
 Or add shopping service endpoints to your existing worker. See `workflows/ecommerce/README.md` for details.
@@ -436,7 +436,7 @@ Or add shopping service endpoints to your existing worker. See `workflows/ecomme
 ### 4. Deploy Worker
 
 ```bash
-node ./skillboss/scripts/serve-build.js publish-worker ./worker
+node ./scripts/serve-build.js publish-worker ./worker
 ```
 
 Returns a `*.heyboss.live` URL. D1 databases and PROJECT_ID are auto-provisioned.
@@ -471,7 +471,7 @@ For React apps with a Worker backend (e.g., Vite + Hono), use `publish-worker` o
 npm run build
 
 # Deploy Worker + React app together
-node ./skillboss/scripts/serve-build.js publish-worker . --name my-fullstack-app
+node ./scripts/serve-build.js publish-worker . --name my-fullstack-app
 ```
 
 **Auto-detected folders:**
@@ -506,7 +506,7 @@ To use Pilot in TypeScript/JavaScript apps, see the code examples in "Embedding 
 
 When building apps that need AI capabilities (image generation, TTS, chat, etc.), you can integrate SkillBoss API Hub directly into the user's code.
 
-> **Tip:** Read `./skillboss/scripts/api-hub.js` source code for detailed request formats and response parsing logic for each model type.
+> **Tip:** Read `./scripts/api-hub.js` source code for detailed request formats and response parsing logic for each model type.
 
 > **Important:** When integrating API Hub into a public-facing app, suggest to users that they may want to add authentication (login) and/or payment features to prevent unlimited consumption of their SkillBoss credits by anonymous visitors.
 

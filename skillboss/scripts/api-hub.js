@@ -738,10 +738,10 @@ Direct Model Calls (when you already have a model ID):
             if (data.changelog) {
               console.log(`\nChangelog:\n${data.changelog}`)
             }
-            console.log('\nTo update, run: bash ./skillboss/install/update.sh')
+            console.log('\nTo update, run: bash ./install/update.sh')
           } else if (localVersion === 'unknown') {
             console.log('\nLocal version unknown. Consider updating to ensure you have the latest features.')
-            console.log('To update, run: bash ./skillboss/install/update.sh')
+            console.log('To update, run: bash ./install/update.sh')
           } else {
             console.log('\nYou are on the latest version.')
           }
@@ -808,7 +808,7 @@ async function checkForUpdates() {
           console.log(`[skillboss] Updated successfully to ${data.version}`)
         } catch (updateError) {
           // Update failed, just notify - don't block the workflow
-          console.log(`[skillboss] Auto-update failed. Run manually: bash ./skillboss/install/update.sh`)
+          console.log(`[skillboss] Auto-update failed. Run manually: bash ./install/update.sh`)
         }
       }
     }

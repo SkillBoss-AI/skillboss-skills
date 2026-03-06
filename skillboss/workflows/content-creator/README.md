@@ -27,13 +27,13 @@ Determine what assets are needed:
 
 ```bash
 # Hero image
-node ./skillboss/scripts/api-hub.js image \
+node ./scripts/api-hub.js image \
   --model "vertex/gemini-2.5-flash-image-preview" \
   --prompt "[YOUR_VISUAL_CONCEPT]" \
   --output /tmp/hero-image.png
 
 # Feature/supporting images
-node ./skillboss/scripts/api-hub.js image \
+node ./scripts/api-hub.js image \
   --model "vertex/gemini-2.5-flash-image-preview" \
   --prompt "[SUPPORTING_VISUAL]" \
   --output /tmp/feature-1.png
@@ -44,7 +44,7 @@ node ./skillboss/scripts/api-hub.js image \
 For voiceovers or narration:
 
 ```bash
-node ./skillboss/scripts/api-hub.js tts \
+node ./scripts/api-hub.js tts \
   --model "elevenlabs/eleven_multilingual_v2" \
   --text "[SCRIPT_TEXT]" \
   --output /tmp/voiceover.mp3
@@ -55,7 +55,7 @@ node ./skillboss/scripts/api-hub.js tts \
 For short promotional videos:
 
 ```bash
-node ./skillboss/scripts/api-hub.js video \
+node ./scripts/api-hub.js video \
   --model "vertex/veo-3.1-fast-generate-preview" \
   --prompt "[VIDEO_DESCRIPTION]" \
   --output /tmp/promo-video.mp4

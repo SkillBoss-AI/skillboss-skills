@@ -41,7 +41,7 @@ async function checkForUpdate() {
       const isWindows = process.platform === 'win32'
       const updateCmd = isWindows
         ? '.\\skillboss\\install\\update.ps1'
-        : 'bash ./skillboss/install/update.sh'
+        : 'bash ./install/update.sh'
 
       console.log(`\n[skillboss] UPDATE REQUIRED: v${localVersion} → v${data.version}`)
       if (data.changelog) {

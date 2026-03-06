@@ -490,7 +490,7 @@ export function App() {
 npm run build
 
 # Deploy Worker + React app together
-node ./skillboss/scripts/serve-build.js publish-worker . --name my-app
+node ./scripts/serve-build.js publish-worker . --name my-app
 ```
 
 The `publish-worker` command automatically detects the `dist/` folder and deploys both the Worker API and React frontend together.

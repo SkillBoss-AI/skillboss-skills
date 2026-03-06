@@ -43,7 +43,7 @@ npx serve ./project
 ### Step 4: Deploy to Production
 
 ```bash
-node ./skillboss/scripts/serve-build.js publish-static ./project --project-id my-site
+node ./scripts/serve-build.js publish-static ./project --project-id my-site
 ```
 
 ### Step 5: Verify Deployment Status
@@ -82,7 +82,7 @@ Common errors and solutions:
 For updates, run the same command - it will overwrite the existing deployment:
 
 ```bash
-node ./skillboss/scripts/serve-build.js publish-static ./project --project-id my-site
+node ./scripts/serve-build.js publish-static ./project --project-id my-site
 ```
 
 The script saves a `.skillboss` file in the project folder, so future deploys auto-detect the project ID.

@@ -176,7 +176,7 @@ Complete model list and detailed parameter documentation.
 Smart model selector — auto-picks the best model for your task. **Use this first for any AI task.**
 
 ```bash
-node ./skillboss/scripts/api-hub.js pilot [options]
+node ./scripts/api-hub.js pilot [options]
 ```
 
 | Option          | Required | Description                                                        |
@@ -212,7 +212,7 @@ node ./skillboss/scripts/api-hub.js pilot [options]
 Chat completions with any supported model.
 
 ```bash
-node ./skillboss/scripts/api-hub.js chat [options]
+node ./scripts/api-hub.js chat [options]
 ```
 
 | Option          | Required | Description                                                |
@@ -232,7 +232,7 @@ node ./skillboss/scripts/api-hub.js chat [options]
 Text-to-speech audio generation.
 
 ```bash
-node ./skillboss/scripts/api-hub.js tts [options]
+node ./scripts/api-hub.js tts [options]
 ```
 
 | Option       | Required | Description                                |
@@ -247,7 +247,7 @@ node ./skillboss/scripts/api-hub.js tts [options]
 Speech-to-text transcription from audio files.
 
 ```bash
-node ./skillboss/scripts/api-hub.js stt [options]
+node ./scripts/api-hub.js stt [options]
 ```
 
 | Option       | Required | Description                                          |
@@ -263,7 +263,7 @@ node ./skillboss/scripts/api-hub.js stt [options]
 Image generation from text prompts.
 
 ```bash
-node ./skillboss/scripts/api-hub.js image [options]
+node ./scripts/api-hub.js image [options]
 ```
 
 | Option      | Required | Description                      |
@@ -279,7 +279,7 @@ node ./skillboss/scripts/api-hub.js image [options]
 Video generation from text prompts.
 
 ```bash
-node ./skillboss/scripts/api-hub.js video [options]
+node ./scripts/api-hub.js video [options]
 ```
 
 | Option     | Required | Description       |
@@ -293,7 +293,7 @@ node ./skillboss/scripts/api-hub.js video [options]
 Image upscaling via FAL creative-upscaler.
 
 ```bash
-node ./skillboss/scripts/api-hub.js upscale [options]
+node ./scripts/api-hub.js upscale [options]
 ```
 
 | Option            | Required | Description                              |
@@ -308,7 +308,7 @@ node ./skillboss/scripts/api-hub.js upscale [options]
 Image-to-image transformation via FAL FLUX dev.
 
 ```bash
-node ./skillboss/scripts/api-hub.js img2img [options]
+node ./scripts/api-hub.js img2img [options]
 ```
 
 | Option            | Required | Description                                      |
@@ -326,7 +326,7 @@ node ./skillboss/scripts/api-hub.js img2img [options]
 Music generation from text prompts.
 
 ```bash
-node ./skillboss/scripts/api-hub.js music [options]
+node ./scripts/api-hub.js music [options]
 ```
 
 | Option       | Required | Description                                              |
@@ -341,7 +341,7 @@ node ./skillboss/scripts/api-hub.js music [options]
 Web search queries.
 
 ```bash
-node ./skillboss/scripts/api-hub.js search [options]
+node ./scripts/api-hub.js search [options]
 ```
 
 | Option    | Required | Description           |
@@ -354,7 +354,7 @@ node ./skillboss/scripts/api-hub.js search [options]
 Web page scraping.
 
 ```bash
-node ./skillboss/scripts/api-hub.js scrape [options]
+node ./scripts/api-hub.js scrape [options]
 ```
 
 | Option    | Required | Description             |
@@ -370,7 +370,7 @@ node ./skillboss/scripts/api-hub.js scrape [options]
 Structured web search via Linkup.
 
 ```bash
-node ./skillboss/scripts/api-hub.js linkup-search [options]
+node ./scripts/api-hub.js linkup-search [options]
 ```
 
 | Option              | Required | Description                                              |
@@ -390,7 +390,7 @@ node ./skillboss/scripts/api-hub.js linkup-search [options]
 Fetch a URL and convert to markdown via Linkup.
 
 ```bash
-node ./skillboss/scripts/api-hub.js linkup-fetch [options]
+node ./scripts/api-hub.js linkup-fetch [options]
 ```
 
 | Option             | Required | Description                                   |
@@ -404,7 +404,7 @@ node ./skillboss/scripts/api-hub.js linkup-fetch [options]
 Send OTP verification code via Prelude.
 
 ```bash
-node ./skillboss/scripts/api-hub.js sms-verify [options]
+node ./scripts/api-hub.js sms-verify [options]
 ```
 
 | Option        | Required | Description                    |
@@ -418,7 +418,7 @@ node ./skillboss/scripts/api-hub.js sms-verify [options]
 Check OTP verification code via Prelude.
 
 ```bash
-node ./skillboss/scripts/api-hub.js sms-check [options]
+node ./scripts/api-hub.js sms-check [options]
 ```
 
 | Option    | Required | Description                 |
@@ -431,7 +431,7 @@ node ./skillboss/scripts/api-hub.js sms-check [options]
 Send SMS notification via Prelude template.
 
 ```bash
-node ./skillboss/scripts/api-hub.js sms-send [options]
+node ./scripts/api-hub.js sms-send [options]
 ```
 
 | Option          | Required | Description                              |
@@ -446,7 +446,7 @@ node ./skillboss/scripts/api-hub.js sms-send [options]
 Send a single email.
 
 ```bash
-node ./skillboss/scripts/api-hub.js send-email [options]
+node ./scripts/api-hub.js send-email [options]
 ```
 
 | Option       | Required | Description                         |
@@ -461,7 +461,7 @@ node ./skillboss/scripts/api-hub.js send-email [options]
 Send templated batch emails.
 
 ```bash
-node ./skillboss/scripts/api-hub.js send-batch [options]
+node ./scripts/api-hub.js send-batch [options]
 ```
 
 | Option        | Required | Description                                       |
@@ -476,7 +476,7 @@ node ./skillboss/scripts/api-hub.js send-batch [options]
 Upload static files to R2 storage and deploy.
 
 ```bash
-node ./skillboss/scripts/serve-build.js publish-static <folder> [options]
+node ./scripts/serve-build.js publish-static <folder> [options]
 ```
 
 | Option         | Required | Description                                    |
@@ -491,7 +491,7 @@ node ./skillboss/scripts/serve-build.js publish-static <folder> [options]
 Upload and deploy a Cloudflare Worker with bindings.
 
 ```bash
-node ./skillboss/scripts/serve-build.js publish-worker <folder> [options]
+node ./scripts/serve-build.js publish-worker <folder> [options]
 ```
 
 | Option         | Required | Description                                                        |
@@ -580,7 +580,7 @@ CREATE TABLE IF NOT EXISTS purchases (
 Connect a Stripe Express account for accepting payments.
 
 ```bash
-node ./skillboss/scripts/stripe-connect.js [options]
+node ./scripts/stripe-connect.js [options]
 ```
 
 | Option         | Required | Description                                 |
@@ -601,7 +601,7 @@ node ./skillboss/scripts/stripe-connect.js [options]
 Search verified CEO/executive conversation transcripts. Access the world's largest database of executive interviews.
 
 ```bash
-node ./skillboss/scripts/api-hub.js run --model "ceointerviews/get_feed" --inputs '{...}'
+node ./scripts/api-hub.js run --model "ceointerviews/get_feed" --inputs '{...}'
 ```
 
 | Input               | Required | Description                                                          |
@@ -621,7 +621,7 @@ node ./skillboss/scripts/api-hub.js run --model "ceointerviews/get_feed" --input
 Get notable quotes from CEOs, executives, and politicians.
 
 ```bash
-node ./skillboss/scripts/api-hub.js run --model "ceointerviews/get_quotes" --inputs '{...}'
+node ./scripts/api-hub.js run --model "ceointerviews/get_quotes" --inputs '{...}'
 ```
 
 | Input                 | Required | Description                                    |
@@ -646,7 +646,7 @@ node ./skillboss/scripts/api-hub.js run --model "ceointerviews/get_quotes" --inp
 Generic endpoint access for any API Hub endpoint.
 
 ```bash
-node ./skillboss/scripts/api-hub.js run [options]
+node ./scripts/api-hub.js run [options]
 ```
 
 | Option     | Required | Description                               |
@@ -660,7 +660,7 @@ node ./skillboss/scripts/api-hub.js run [options]
 
 ## Configuration File
 
-`./skillboss/config.json`:
+`./config.json`:
 
 ```json
 {
