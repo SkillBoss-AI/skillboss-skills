@@ -65,7 +65,10 @@ const API_HUB_BASE_URL = config.baseUrl || 'https://api.heybossai.com/v1'
  * @returns {boolean}
  */
 function isPlaceholderKey(key) {
-  return !key || key === 'YOUR_API_KEY_HERE'
+  if (!key || key === 'YOUR_API_KEY_HERE') return true
+  // Detect placeholder strings like "sk-xxx...xxx (⚠️ Please guide users...)"
+  if (/\s/.test(key) || key.includes('...')) return true
+  return false
 }
 
 /**
