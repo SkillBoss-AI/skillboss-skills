@@ -1,11 +1,13 @@
 const fs = require('fs')
 const path = require('path')
+const os = require('os')
 const { pipeline } = require('stream/promises')
 const { Readable } = require('stream')
 const { fetchWithRetry } = require('./fetch-retry')
 
 // Load config from config.json (sibling to scripts folder)
 const CONFIG_PATH = path.join(__dirname, '..', '..', 'config.json')
+const GLOBAL_CREDS_PATH = path.join(os.homedir(), '.config', 'skillboss', 'credentials.json')
 
 function loadConfig() {
   try {
@@ -13,6 +15,14 @@ function loadConfig() {
     return JSON.parse(configData)
   } catch (err) {
     throw new Error(`Failed to load config from ${CONFIG_PATH}: ${err.message}`)
+  }
+}
+
+function loadGlobalCreds() {
+  try {
+    return JSON.parse(fs.readFileSync(GLOBAL_CREDS_PATH, 'utf8'))
+  } catch {
+    return null
   }
 }
 
@@ -55,8 +65,18 @@ async function checkForUpdate() {
   }
 }
 
-// Configuration from config.json
-let API_HUB_API_KEY = config.apiKey
+// Resolve API key: env var > ~/.config/skillboss/credentials.json > config.json
+function resolveApiKey() {
+  const envKey = process.env.SKILLBOSS_API_KEY
+  if (envKey && !isPlaceholderKey(envKey)) return envKey
+
+  const creds = loadGlobalCreds()
+  if (creds?.api_key && !isPlaceholderKey(creds.api_key)) return creds.api_key
+
+  return config.apiKey
+}
+
+let API_HUB_API_KEY = resolveApiKey()
 const API_HUB_BASE_URL = config.baseUrl || 'https://api.heybossai.com/v1'
 
 /**
@@ -82,15 +102,11 @@ async function ensureApiKey() {
     return API_HUB_API_KEY
   }
 
-  // 2. Re-read config (another call may have provisioned already)
-  try {
-    const freshConfig = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'))
-    if (!isPlaceholderKey(freshConfig.apiKey)) {
-      API_HUB_API_KEY = freshConfig.apiKey
-      return API_HUB_API_KEY
-    }
-  } catch {
-    // If re-read fails, continue to provision
+  // 2. Re-resolve from all sources (another process may have provisioned)
+  const freshKey = resolveApiKey()
+  if (!isPlaceholderKey(freshKey)) {
+    API_HUB_API_KEY = freshKey
+    return API_HUB_API_KEY
   }
 
   // 3. Auto-provision from API Hub
@@ -110,7 +126,21 @@ async function ensureApiKey() {
 
   const data = await resp.json()
 
-  // 4. Save to config.json
+  // 4. Save to ~/.config/skillboss/credentials.json
+  try {
+    const credsDir = path.dirname(GLOBAL_CREDS_PATH)
+    fs.mkdirSync(credsDir, { recursive: true })
+    fs.writeFileSync(GLOBAL_CREDS_PATH, JSON.stringify({
+      api_key: data.api_key,
+      type: 'trial',
+      updated_at: new Date().toISOString(),
+    }, null, 2) + '\n')
+    try { fs.chmodSync(GLOBAL_CREDS_PATH, 0o600) } catch {}
+  } catch (writeErr) {
+    console.error(`[skillboss] Warning: could not save credentials: ${writeErr.message}`)
+  }
+
+  // 5. Also save to config.json
   try {
     const freshConfig = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'))
     freshConfig.apiKey = data.api_key
