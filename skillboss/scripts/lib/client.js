@@ -223,7 +223,7 @@ async function apiHubPost(endpoint, data) {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${apiKey}`,
       'X-Agent-Type': detectAgentType(),
-      'X-Skill-Pack': 'skillboss',
+      'X-Skill-Pack': config.leadSkill || 'skillboss',
     },
     body: JSON.stringify(data),
   })
@@ -254,7 +254,7 @@ async function* apiHubStream(endpoint, data) {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${apiKey}`,
       'X-Agent-Type': detectAgentType(),
-      'X-Skill-Pack': 'skillboss',
+      'X-Skill-Pack': config.leadSkill || 'skillboss',
     },
     body: JSON.stringify(data),
   })
@@ -322,7 +322,7 @@ async function apiHubGet(endpoint) {
     headers: {
       Authorization: `Bearer ${apiKey}`,
       'X-Agent-Type': detectAgentType(),
-      'X-Skill-Pack': 'skillboss',
+      'X-Skill-Pack': config.leadSkill || 'skillboss',
     },
   })
 
@@ -352,7 +352,7 @@ async function apiHubRaw(endpoint, data) {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${apiKey}`,
       'X-Agent-Type': detectAgentType(),
-      'X-Skill-Pack': 'skillboss',
+      'X-Skill-Pack': config.leadSkill || 'skillboss',
     },
     body: JSON.stringify(data),
   })
