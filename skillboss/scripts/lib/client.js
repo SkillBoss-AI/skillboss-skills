@@ -191,6 +191,24 @@ function handleBalanceWarning(data) {
 }
 
 /**
+ * Detect which AI agent is running this process.
+ * @returns {string} Agent type identifier (e.g. 'claude-code', 'cursor', 'cline')
+ */
+function detectAgentType() {
+  // Claude Code (also covers NanoClaw which runs Claude Code inside containers)
+  if (process.env.CLAUDECODE) return 'claude-code'
+  // Cursor (VS Code fork, may set these)
+  if (process.env.CURSOR_SESSION_ID || process.env.CURSOR_TRACE_ID) return 'cursor'
+  // Cline extension
+  if (process.env.CLINE) return 'cline'
+  // Windsurf
+  if (process.env.WINDSURF_SESSION_ID) return 'windsurf'
+  // Fall back to terminal program name (e.g. "vscode", "iTerm2")
+  if (process.env.TERM_PROGRAM) return process.env.TERM_PROGRAM
+  return ''
+}
+
+/**
  * Simple HTTP client for API Hub
  * @param {string} endpoint - API endpoint
  * @param {object} data - Request body
@@ -204,6 +222,8 @@ async function apiHubPost(endpoint, data) {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${apiKey}`,
+      'X-Agent-Type': detectAgentType(),
+      'X-Skill-Pack': 'skillboss',
     },
     body: JSON.stringify(data),
   })
@@ -233,6 +253,8 @@ async function* apiHubStream(endpoint, data) {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${apiKey}`,
+      'X-Agent-Type': detectAgentType(),
+      'X-Skill-Pack': 'skillboss',
     },
     body: JSON.stringify(data),
   })
@@ -299,6 +321,8 @@ async function apiHubGet(endpoint) {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${apiKey}`,
+      'X-Agent-Type': detectAgentType(),
+      'X-Skill-Pack': 'skillboss',
     },
   })
 
@@ -327,6 +351,8 @@ async function apiHubRaw(endpoint, data) {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${apiKey}`,
+      'X-Agent-Type': detectAgentType(),
+      'X-Skill-Pack': 'skillboss',
     },
     body: JSON.stringify(data),
   })
@@ -348,6 +374,7 @@ module.exports = {
   ensureApiKey,
   handleBalanceWarning,
   checkForUpdate,
+  detectAgentType,
   apiHubPost,
   apiHubStream,
   saveBinaryResponse,
