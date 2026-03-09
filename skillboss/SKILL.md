@@ -108,7 +108,7 @@ After authentication, your API key is saved to:
 3. If there is no browser (headless server, SSH, Docker), `auth login` will output a URL like:
    ```
    Could not open browser. Open this URL manually:
-     https://www.skillboss.co/bind-token?temp_id=sk-...
+     https://www.skillboss.co/login?temp=sk-tmp-...
    ```
    **Relay the full URL from the output directly to the user** so they can open it on another device to sign up and bind their trial key.
 

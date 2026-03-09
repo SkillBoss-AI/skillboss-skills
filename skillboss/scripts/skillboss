@@ -457,7 +457,7 @@ async function cmdTrial(flags) {
  * Opens the bind URL, polls until the temp token is bound to a real account.
  */
 async function browserSignIn(tempApiKey) {
-  const bindUrl = `${WEB_BASE}/bind-token?temp_id=${encodeURIComponent(tempApiKey)}`
+  const bindUrl = `${WEB_BASE}/login?temp=${encodeURIComponent(tempApiKey)}`
 
   const opened = openBrowser(bindUrl)
   if (opened) {

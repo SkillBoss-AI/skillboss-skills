@@ -153,7 +153,7 @@ async function ensureApiKey() {
     console.error(`[skillboss] Warning: could not save key to config.json: ${writeErr.message}`)
   }
 
-  const bindUrl = `https://www.skillboss.co/bind-token?temp_id=${encodeURIComponent(data.api_key)}`
+  const bindUrl = `https://www.skillboss.co/login?temp=${encodeURIComponent(data.api_key)}`
   console.error(
     `[skillboss] Free trial active ($${data.balance_usd} credit). ` +
       `Sign up & keep your credits: ${bindUrl}`,
@@ -163,13 +163,24 @@ async function ensureApiKey() {
 }
 
 /**
- * Build the bind-token URL that includes the current temp token ID
+ * Check if a key is a temp/trial key by its prefix.
+ * Temp keys start with "sk-tmp-", permanent keys with "sk-".
+ * @param {string} key
+ * @returns {boolean}
+ */
+function isTempKey(key) {
+  return typeof key === 'string' && key.startsWith('sk-tmp-')
+}
+
+/**
+ * Build the login URL that includes the current temp token ID
  * so the sign-up flow can auto-associate the trial credits.
  * @returns {string|null}
  */
 function buildBindUrl() {
   if (isPlaceholderKey(API_HUB_API_KEY)) return null
-  return `https://www.skillboss.co/bind-token?temp_id=${encodeURIComponent(API_HUB_API_KEY)}`
+  if (!isTempKey(API_HUB_API_KEY)) return null
+  return `https://www.skillboss.co/login?temp=${encodeURIComponent(API_HUB_API_KEY)}`
 }
 
 /**
@@ -377,6 +388,7 @@ module.exports = {
   API_HUB_API_KEY,
   API_HUB_BASE_URL,
   isPlaceholderKey,
+  isTempKey,
   ensureApiKey,
   handleBalanceWarning,
   checkForUpdate,
