@@ -218,9 +218,13 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)) }
 // ── API ───────────────────────────────────────────────────────────────
 
 async function provisionTempToken() {
+  const headers = { 'Content-Type': 'application/json' }
+  if (process.env.SKILLBOSS_E2E_SECRET) {
+    headers['X-E2E-Secret'] = process.env.SKILLBOSS_E2E_SECRET
+  }
   const resp = await fetch(`${API_BASE}/temp-token/provision`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
   })
   if (!resp.ok) {
     const body = await resp.text().catch(() => '')

@@ -37,6 +37,14 @@ Use this skill when the user wants to:
 
 Provisions a trial API key with $0.25 free credit. No browser, no sign-up required. The key is saved automatically and printed to stdout.
 
+### If trial provisioning is rate-limited:
+
+If `auth trial` returns a rate-limit error, ask the user:
+
+> Trial provisioning is rate-limited. Would you like to sign up for a SkillBoss account instead? https://www.skillboss.co (yes/no)
+
+If yes, run `./scripts/skillboss auth login`.
+
 ### Upgrade to a permanent account:
 
 ```bash

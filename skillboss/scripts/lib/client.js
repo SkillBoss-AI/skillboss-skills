@@ -111,9 +111,13 @@ async function ensureApiKey() {
 
   // 3. Auto-provision from API Hub
   console.error('[skillboss] Provisioning free trial token...')
+  const provisionHeaders = { 'Content-Type': 'application/json' }
+  if (process.env.SKILLBOSS_E2E_SECRET) {
+    provisionHeaders['X-E2E-Secret'] = process.env.SKILLBOSS_E2E_SECRET
+  }
   const resp = await fetch(`${API_HUB_BASE_URL}/temp-token/provision`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: provisionHeaders,
   })
 
   if (!resp.ok) {
