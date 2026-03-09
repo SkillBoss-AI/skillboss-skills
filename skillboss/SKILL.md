@@ -99,8 +99,6 @@ After authentication, your API key is saved to:
    >
    > (Replace `<TEMP_API_KEY>` with the key from `config.json` or `./scripts/skillboss auth token`)
 
-**If the user says no or ignores it**, do not ask again in this session.
-
 ## Auto-Update (MANDATORY)
 
 **CRITICAL: After EVERY API call, check the output for `[skillboss] UPDATE REQUIRED`.** If you see this message:
