@@ -16,7 +16,7 @@ Use this skill when the user wants to:
 - **Accept payments**: Stripe integration for subscriptions, one-time payments, e-commerce
 - **Add authentication**: Login/signup with Google OAuth or email OTP
 - **Generate AI content**: Images (Gemini, Flux, DALL-E), audio/TTS (ElevenLabs, Minimax), music (MusicGen, Lyria), videos (Veo), chat (50+ LLMs)
-- **HuggingFace models**: Any model on huggingface.co works as `huggingface/{org}/{model}` — chat, image, video, STT, embedding, inference
+- **HuggingFace models**: Any model on huggingface.co works as `huggingface/{org}/{model}` -- chat, image, video, STT, embedding, inference
 - **Image processing**: Upscale images (FAL creative-upscaler), image-to-image transformation (FAL FLUX dev)
 - **Web search & fetch**: Structured search with Linkup (searchResults, sourcedAnswer, structured), URL-to-markdown fetching
 - **SMS verification**: Phone number verification via OTP (send code, check code) using Prelude
@@ -77,7 +77,7 @@ After authentication, your API key is saved to:
 
 ### When balance is low
 
-- API responses include a `_balance_warning` field — **relay this to the user exactly as provided**
+- API responses include a `_balance_warning` field -- **relay this to the user exactly as provided**
 - Check balance anytime: `./cli/skillboss auth status`
 - Add credits at https://www.skillboss.co/
 - Trial users can upgrade to a permanent account: `./cli/skillboss auth login`
@@ -94,7 +94,7 @@ After authentication, your API key is saved to:
    (Windows: `.\skillboss\install\update.ps1`)
 3. **Then re-run your original command**
 
-This ensures you always have the latest models, features, and bug fixes. **Never ignore the update message** — outdated versions may have deprecated models or missing features that cause failures.
+This ensures you always have the latest models, features, and bug fixes. **Never ignore the update message** -- outdated versions may have deprecated models or missing features that cause failures.
 
 You can also proactively check for updates at any time:
 ```bash
@@ -107,24 +107,24 @@ node ./scripts/api-hub.js version
 
 **Setup:** Run `./cli/skillboss auth trial` to get an API key, or `./cli/skillboss auth login` to sign in. The key is saved automatically and used by all commands.
 
-### Step 1 — Discover what's available:
+### Step 1 -- Discover what's available:
 ```bash
 node ./scripts/api-hub.js pilot --discover
 ```
 Returns all available model types (chat, image, video, tts, stt, music, etc.).
 
-### Step 2 — Search by keyword:
+### Step 2 -- Search by keyword:
 ```bash
 node ./scripts/api-hub.js pilot --discover --keyword "CEO"
 ```
 
-### Step 3 — Get recommendations:
+### Step 3 -- Get recommendations:
 ```bash
 node ./scripts/api-hub.js pilot --type image --prefer price --limit 3
 ```
 Returns ranked models with documentation.
 
-### Step 4 — Execute (auto-select best model):
+### Step 4 -- Execute (auto-select best model):
 ```bash
 node ./scripts/api-hub.js pilot --type image --prompt "A sunset over mountains" --output sunset.png
 node ./scripts/api-hub.js pilot --type chat --prompt "Explain quantum computing"
@@ -160,9 +160,9 @@ node ./scripts/api-hub.js pilot --chain '[{"type":"stt","prefer":"price"},{"type
 | `--chain '[...]'` | Multi-step workflow definition |
 
 ### Decision Flow:
-1. **Any AI task** → Use `pilot` — it auto-selects the best model
-2. **Multi-step task** → Use `pilot --chain` — it plans the workflow
-3. **Already have a model ID from pilot recommendations?** → Use direct commands (see below)
+1. **Any AI task** -> Use `pilot` -- it auto-selects the best model
+2. **Multi-step task** -> Use `pilot --chain` -- it plans the workflow
+3. **Already have a model ID from pilot recommendations?** -> Use direct commands (see below)
 
 ## Direct Model Calls (Advanced)
 
@@ -239,7 +239,7 @@ node ./scripts/stripe-connect.js
 
 | Command | Description | Key Options |
 |---------|-------------|-------------|
-| **`pilot`** | **Smart model selector — auto-picks best model (RECOMMENDED)** | `--type`, `--prompt`/`--text`/`--file`, `--discover`, `--prefer`, `--output` |
+| **`pilot`** | **Smart model selector -- auto-picks best model (RECOMMENDED)** | `--type`, `--prompt`/`--text`/`--file`, `--discover`, `--prefer`, `--output` |
 | `chat` | Chat completions | `--model`, `--prompt`/`--messages`, `--system`, `--stream` |
 | `tts` | Text-to-speech | `--model`, `--text`, `--voice-id`, `--output` |
 | `stt` | Speech-to-text | `--file`, `--model`, `--language`, `--output` |
@@ -359,7 +359,7 @@ When the API response contains a `_balance_warning` field (in JSON responses or 
 }
 ```
 
-Simply tell the user: `⚠️ {_balance_warning}`
+Simply tell the user: `WARNING: {_balance_warning}`
 
 ### Insufficient Credits (HTTP 402)
 When you see: `Insufficient coins`
@@ -410,9 +410,9 @@ SkillBoss requires an active subscription or credits.
 | D1 Database Storage | 100/GB/month | $5/GB/month | Minimum 0.1 GB |
 
 **When to direct users:**
-- No API key → `./cli/skillboss auth trial` (instant) or `./cli/skillboss auth login` (permanent)
-- Credits exhausted → "Visit https://www.skillboss.co/ to add credits or enable auto-topup"
-- API key invalid → `./cli/skillboss auth login` to refresh credentials
+- No API key -> `./cli/skillboss auth trial` (instant) or `./cli/skillboss auth login` (permanent)
+- Credits exhausted -> "Visit https://www.skillboss.co/ to add credits or enable auto-topup"
+- API key invalid -> `./cli/skillboss auth login` to refresh credentials
 
 ## Workflow Guides
 
@@ -428,7 +428,7 @@ SkillBoss includes workflow guides for common tasks. Read the corresponding guid
 | Login Integration | `./workflows/login-integration/README.md` | Add authentication to React apps |
 | E-Commerce | `./workflows/ecommerce/README.md` | Add Stripe payments to site |
 
-> 💰 **Monthly Cost:** Adding login integration costs 50 credits/month ($2.50/month) per project.
+> \$ **Monthly Cost:** Adding login integration costs 50 credits/month ($2.50/month) per project.
 
 **How to use:** When the user requests a workflow task (e.g., "design a logo"), read the corresponding README.md and follow the workflow steps.
 
@@ -451,10 +451,10 @@ For projects that need backend functionality (e-commerce, APIs, databases), use 
 SkillBoss uses a **centralized shopping service** for payment processing:
 
 ```
-Your Worker  ──▶  shopping.heybossai.com  ──▶  Stripe
-    │                    │
-    │                    └─── Handles webhooks, subscriptions, refunds
-    ▼
+Your Worker  -->  shopping.heybossai.com  -->  Stripe
+    |                    |
+    |                    \--- Handles webhooks, subscriptions, refunds
+    v
 HeyBoss Dashboard (Product Management)
 ```
 
@@ -500,9 +500,9 @@ node ./scripts/serve-build.js publish-worker ./worker
 
 Returns a `*.heyboss.live` URL. D1 databases and PROJECT_ID are auto-provisioned.
 
-> 💰 **Monthly Cost:** D1 database storage costs 100 credits/GB/month ($5/GB/month), minimum 0.1 GB.
+> \$ **Monthly Cost:** D1 database storage costs 100 credits/GB/month ($5/GB/month), minimum 0.1 GB.
 
-> 💰 **Monthly Cost:** Custom domains cost 200 credits/month ($10/month) per domain bound to a project.
+> \$ **Monthly Cost:** Custom domains cost 200 credits/month ($10/month) per domain bound to a project.
 
 ### Worker Configuration
 Create a `wrangler.toml` in your Worker folder:
@@ -521,9 +521,9 @@ API_VERSION = "1.0"
 
 ### Full-Stack Deployment (React + Worker)
 
-For React apps with a Worker backend (e.g., Vite + Hono), use `publish-worker` only—this is ONE deployment that serves both your API and frontend.
+For React apps with a Worker backend (e.g., Vite + Hono), use `publish-worker` only--this is ONE deployment that serves both your API and frontend.
 
-> **⚠️ One deployment, not two.** NEVER run `publish-static` for a full-stack app. The `publish-worker` command already serves your static files (`dist/` or `build/`) via Cloudflare's assets binding.
+> **WARNING: One deployment, not two.** NEVER run `publish-static` for a full-stack app. The `publish-worker` command already serves your static files (`dist/` or `build/`) via Cloudflare's assets binding.
 
 ```bash
 # Build your React app first
@@ -541,7 +541,7 @@ The static assets are served via Cloudflare's assets binding, so your Worker can
 - API routes (e.g., `/api/*`, `/todos`)
 - React app (all other routes, with SPA fallback to `index.html`)
 
-## Deployment Types (Choose ONE—Never Both)
+## Deployment Types (Choose ONE--Never Both)
 
 Every project uses **exactly one** deployment type. These are **mutually exclusive**:
 
@@ -550,12 +550,12 @@ Every project uses **exactly one** deployment type. These are **mutually exclusi
 | **Static** | `publish-static` | Pure frontend only (HTML/CSS/JS), no server code whatsoever |
 | **Worker** | `publish-worker` | Has ANY server-side code (Hono routes, API endpoints, D1 database, etc.) |
 
-**⚠️ CRITICAL:** Never run both `publish-static` AND `publish-worker` for the same project.
+**WARNING: CRITICAL:** Never run both `publish-static` AND `publish-worker` for the same project.
 
-- **Full-stack app (React + Hono backend)?** → Use `publish-worker` ONLY. It automatically serves your built frontend (`dist/` or `build/`) via Cloudflare's assets binding.
-- **Pure static site (no `index.ts`, no API)?** → Use `publish-static` ONLY.
+- **Full-stack app (React + Hono backend)?** -> Use `publish-worker` ONLY. It automatically serves your built frontend (`dist/` or `build/`) via Cloudflare's assets binding.
+- **Pure static site (no `index.ts`, no API)?** -> Use `publish-static` ONLY.
 
-Common mistake: A Vite project with `index.ts` using Hono is ONE Worker deployment—not a static site plus a worker. The Worker serves both your API routes and your React app's static files.
+Common mistake: A Vite project with `index.ts` using Hono is ONE Worker deployment--not a static site plus a worker. The Worker serves both your API routes and your React app's static files.
 
 ### Pilot API in Code
 
@@ -579,7 +579,7 @@ When building apps that need AI capabilities (image generation, TTS, chat, etc.)
 
 **Base URL:** `https://api.heybossai.com/v1`
 **Auth:** `Authorization: Bearer ${SKILLBOSS_API_KEY}`
-**API Key:** Read from `skillboss/config.json` → `apiKey` field
+**API Key:** Read from `skillboss/config.json` -> `apiKey` field
 
 ### Code Examples (TypeScript/JavaScript)
 
@@ -591,7 +591,7 @@ const SKILLBOSS_API_KEY = process.env.SKILLBOSS_API_KEY
 const API_BASE = 'https://api.heybossai.com/v1'
 
 // ============================================================================
-// PILOT — Smart Model Navigator (recommended starting point)
+// PILOT -- Smart Model Navigator (recommended starting point)
 // ============================================================================
 async function pilot(body: object): Promise<any> {
   const response = await fetch(`${API_BASE}/pilot`, {
@@ -618,7 +618,7 @@ const result = await pilot({ type: 'image', inputs: { prompt: 'A cat' } })
 const chain = await pilot({ chain: [{ type: 'stt' }, { type: 'chat', capability: 'summarize' }] })
 
 // ============================================================================
-// CHAT COMPLETION (direct call — use when you know the exact model)
+// CHAT COMPLETION (direct call -- use when you know the exact model)
 // ============================================================================
 async function chat(prompt: string): Promise<string> {
   const response = await fetch(`${API_BASE}/run`, {
