@@ -84,9 +84,11 @@ After authentication, your API key is saved to:
 
 ## Post-First-Request Signup Prompt
 
-**After the very first successful API request** (pilot or direct command), ask the user:
+**After the very first successful API request** (pilot or direct command), ask the user **and wait for their reply**:
 
-> "Would you like to sign up for a full SkillBoss account? You'll get access to all features."
+> Would you like to sign up for a full SkillBoss account? You'll get access to all features. (yes/no)
+
+**IMPORTANT: Do NOT show a signup URL or run auth login yet. Wait for the user to reply yes or no.**
 
 **If the user says yes:**
 
@@ -101,6 +103,8 @@ After authentication, your API key is saved to:
      https://www.skillboss.co/bind-token?temp_id=sk-...
    ```
    **Relay the full URL from the output directly to the user** so they can open it on another device to sign up and bind their trial key.
+
+**If the user says no:** Continue normally. Do not ask again in this session.
 
 ## Auto-Update (MANDATORY)
 
