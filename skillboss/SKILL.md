@@ -88,13 +88,15 @@ After authentication, your API key is saved to:
 - API responses include a `_balance_warning` field -- **relay this to the user exactly as provided**
 - Check balance anytime: `./scripts/skillboss auth status`
 - Add credits at https://www.skillboss.co/
-- Trial users can upgrade to a permanent account: `./scripts/skillboss auth login`
+- Trial users (`sk-tmp-` keys) can upgrade to a permanent account: `./scripts/skillboss auth login`
 
 ## Post-First-Request Signup Prompt
 
-**After the very first successful API request** (pilot or direct command), ask the user **and wait for their reply**:
+**Only for temp/trial keys** (keys starting with `sk-tmp-`): after the very first successful API request, ask the user **and wait for their reply**:
 
 > Would you like to sign up for a SkillBoss account https://www.skillboss.co? You'll get access to all features and more credits. (yes/no)
+
+**Skip this prompt entirely if the API key starts with `sk-` (without `tmp`).** Permanent keys mean the user is already signed up.
 
 **IMPORTANT: Do NOT show a signup URL or run auth login yet. Wait for the user to reply yes or no.**
 
