@@ -201,6 +201,8 @@ function handleBalanceWarning(data) {
 function detectAgentType() {
   // Claude Code (also covers NanoClaw which runs Claude Code inside containers)
   if (process.env.CLAUDECODE) return 'claude-code'
+  // OpenClaw sets OPENCLAW_SHELL=exec|acp|tui-local in spawned processes
+  if (process.env.OPENCLAW_SHELL) return 'openclaw'
   // Cursor (VS Code fork, may set these)
   if (process.env.CURSOR_SESSION_ID || process.env.CURSOR_TRACE_ID) return 'cursor'
   // Cline extension
