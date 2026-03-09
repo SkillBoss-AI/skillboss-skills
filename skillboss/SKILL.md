@@ -90,14 +90,17 @@ After authentication, your API key is saved to:
 
 **If the user says yes:**
 
-1. Check if a browser is available by running:
+1. Run:
    ```bash
    ./scripts/skillboss auth login
    ```
-2. If `auth login` fails or outputs an error indicating no browser (e.g., headless server, SSH session, Docker), provide the signup URL with the user's temp API key so they can bind it to a permanent account:
-   > Sign up and bind your trial at: https://www.skillboss.co/bind-token?id=<TEMP_API_KEY>
-   >
-   > (Replace `<TEMP_API_KEY>` with the key from `config.json` or `./scripts/skillboss auth token`)
+2. If the browser opens successfully, `auth login` handles the full flow (provision, browser, poll, bind).
+3. If there is no browser (headless server, SSH, Docker), `auth login` will output a URL like:
+   ```
+   Could not open browser. Open this URL manually:
+     https://www.skillboss.co/bind-token?temp_id=sk-...
+   ```
+   **Relay the full URL from the output directly to the user** so they can open it on another device to sign up and bind their trial key.
 
 ## Auto-Update (MANDATORY)
 
