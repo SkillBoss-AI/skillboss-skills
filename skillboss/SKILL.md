@@ -32,7 +32,7 @@ Use this skill when the user wants to:
 ### No API key? Get a free trial instantly:
 
 ```bash
-./cli/skillboss auth trial
+./scripts/skillboss auth trial
 ```
 
 Provisions a trial API key with $0.25 free credit. No browser, no sign-up required. The key is saved automatically and printed to stdout.
@@ -40,7 +40,7 @@ Provisions a trial API key with $0.25 free credit. No browser, no sign-up requir
 ### Upgrade to a permanent account:
 
 ```bash
-./cli/skillboss auth login
+./scripts/skillboss auth login
 ```
 
 Opens your browser to sign up or log in at skillboss.co. Trial credits transfer to the permanent account automatically.
@@ -48,19 +48,19 @@ Opens your browser to sign up or log in at skillboss.co. Trial credits transfer 
 ### Check status and balance:
 
 ```bash
-./cli/skillboss auth status
+./scripts/skillboss auth status
 ```
 
 ### Get API key for scripting:
 
 ```bash
-export SKILLBOSS_API_KEY=$(./cli/skillboss auth token)
+export SKILLBOSS_API_KEY=$(./scripts/skillboss auth token)
 ```
 
 ### Log out:
 
 ```bash
-./cli/skillboss auth logout
+./scripts/skillboss auth logout
 ```
 
 ### Where credentials are stored
@@ -78,9 +78,9 @@ After authentication, your API key is saved to:
 ### When balance is low
 
 - API responses include a `_balance_warning` field -- **relay this to the user exactly as provided**
-- Check balance anytime: `./cli/skillboss auth status`
+- Check balance anytime: `./scripts/skillboss auth status`
 - Add credits at https://www.skillboss.co/
-- Trial users can upgrade to a permanent account: `./cli/skillboss auth login`
+- Trial users can upgrade to a permanent account: `./scripts/skillboss auth login`
 
 ## Auto-Update (MANDATORY)
 
@@ -105,7 +105,7 @@ node ./scripts/api-hub.js version
 
 **ALWAYS use the `pilot` command.** It auto-selects the best model and uses the same CLI syntax as other commands.
 
-**Setup:** Run `./cli/skillboss auth trial` to get an API key, or `./cli/skillboss auth login` to sign in. The key is saved automatically and used by all commands.
+**Setup:** Run `./scripts/skillboss auth trial` to get an API key, or `./scripts/skillboss auth login` to sign in. The key is saved automatically and used by all commands.
 
 ### Step 1 -- Discover what's available:
 ```bash

@@ -39,7 +39,7 @@ When you see: `Insufficient coins`
 
 **Check balance and tell the user:**
 ```bash
-./cli/skillboss auth status
+./scripts/skillboss auth status
 ```
 
 **Tell the user:**
@@ -48,7 +48,7 @@ Your SkillBoss credits have run out.
 
 To continue:
 1. Visit https://www.skillboss.co/ to add credits or enable auto-topup
-2. Trial users: run `./cli/skillboss auth login` to upgrade to a permanent account
+2. Trial users: run `./scripts/skillboss auth login` to upgrade to a permanent account
 
 After adding credits, retry the command.
 ```
@@ -59,7 +59,7 @@ When you see: `Invalid token`
 
 **Fix it:**
 ```bash
-./cli/skillboss auth login
+./scripts/skillboss auth login
 ```
 
 This will provision a new key and open the browser to sign in. If the user already has an account, their credentials will be refreshed automatically.

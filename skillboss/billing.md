@@ -14,6 +14,6 @@ SkillBoss requires an active subscription or credits.
 
 ## When to Direct Users
 
-- No API key -> `./cli/skillboss auth trial` (instant) or `./cli/skillboss auth login` (permanent)
+- No API key -> `./scripts/skillboss auth trial` (instant) or `./scripts/skillboss auth login` (permanent)
 - Credits exhausted -> "Visit https://www.skillboss.co/ to add credits or enable auto-topup"
-- API key invalid -> `./cli/skillboss auth login` to refresh credentials
+- API key invalid -> `./scripts/skillboss auth login` to refresh credentials
