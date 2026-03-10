@@ -379,6 +379,39 @@ async function apiHubRaw(endpoint, data) {
   return response
 }
 
+/**
+ * Simple HTTP PUT client for API Hub
+ * @param {string} endpoint - API endpoint
+ * @param {object} data - Request body
+ * @returns {Promise<object>} Response data
+ */
+async function apiHubPut(endpoint, data) {
+  const apiKey = await ensureApiKey()
+
+  const response = await fetchWithRetry(`${API_HUB_BASE_URL}${endpoint}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+      'X-Agent-Type': detectAgentType(),
+      'X-Skill-Pack': config.leadSkill || 'skillboss',
+    },
+    body: JSON.stringify(data),
+  })
+
+  if (!response.ok) {
+    const errorText = await response.text()
+    throw new Error(`API Hub request failed: ${response.status} ${errorText}`)
+  }
+
+  const result = await response.json()
+  handleBalanceWarning(result)
+
+  await checkForUpdate()
+
+  return result
+}
+
 module.exports = {
   loadConfig,
   config,
@@ -394,5 +427,6 @@ module.exports = {
   apiHubStream,
   saveBinaryResponse,
   apiHubGet,
+  apiHubPut,
   apiHubRaw,
 }

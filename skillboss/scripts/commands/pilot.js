@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const { apiHubPost } = require('../lib/client')
+const { apiHubPost, apiHubGet, apiHubPut } = require('../lib/client')
 const { fetchWithRetry } = require('../lib/fetch-retry')
 const { config } = require('../lib/client')
 
@@ -183,4 +183,25 @@ async function pilot(flags) {
   }
 }
 
-module.exports = { pilot }
+/**
+ * Get current pilot preference
+ */
+async function getPilotPreference() {
+  const result = await apiHubGet('/pilot/preferences')
+  return result
+}
+
+/**
+ * Set pilot preference
+ * @param {string|null} prefer - 'price', 'quality', or 'off' (clears preference)
+ */
+async function setPilotPreference(prefer) {
+  const value = prefer === 'off' ? null : prefer
+  if (value !== null && value !== 'price' && value !== 'quality') {
+    throw new Error("prefer must be 'price', 'quality', or 'off'")
+  }
+  const result = await apiHubPut('/pilot/preferences', { prefer: value })
+  return result
+}
+
+module.exports = { pilot, getPilotPreference, setPilotPreference }

@@ -56,7 +56,7 @@ const { sendEmail, sendBatchEmails } = require('./commands/email')
 const { smsVerify, smsCheck, smsSend } = require('./commands/sms')
 const { gamma, document } = require('./commands/document')
 const { music } = require('./commands/music')
-const { pilot } = require('./commands/pilot')
+const { pilot, getPilotPreference, setPilotPreference } = require('./commands/pilot')
 const { listModels } = require('./commands/models')
 
 // CLI argument parsing
@@ -133,6 +133,10 @@ Pilot Examples (recommended --auto-selects best model for your task):
   node api-hub.js pilot --type stt --file recording.m4a                          # Speech-to-text (auto-select)
   node api-hub.js pilot --type music --prompt "upbeat" --duration 30 --output track.mp3  # Music (auto-select)
   node api-hub.js pilot --type video --prompt "A cat playing" --output video.mp4         # Video (auto-select)
+  node api-hub.js pilot --set-prefer price                                         # Set preference to prioritize cost
+  node api-hub.js pilot --set-prefer quality                                       # Set preference to prioritize quality
+  node api-hub.js pilot --set-prefer off                                           # Clear preference (use default balanced)
+  node api-hub.js pilot --get-prefer                                               # View current preference
 
 Direct Model Calls (when you already have a model ID):
   node api-hub.js chat --model MODEL_ID --prompt "Hello"
@@ -148,6 +152,26 @@ Direct Model Calls (when you already have a model ID):
 
     switch (command) {
       case 'pilot': {
+        // Handle preference management flags
+        if (args['set-prefer']) {
+          const prefResult = await setPilotPreference(args['set-prefer'])
+          if (prefResult.prefer === null) {
+            console.log('Pilot preference cleared (using default: balanced)')
+          } else {
+            console.log(`Pilot preference set to: ${prefResult.prefer}`)
+          }
+          break
+        }
+        if (args['get-prefer']) {
+          const prefResult = await getPilotPreference()
+          if (prefResult.prefer) {
+            console.log(`Current pilot preference: ${prefResult.prefer}`)
+          } else {
+            console.log('No pilot preference set (using default: balanced)')
+          }
+          break
+        }
+
         result = await pilot(args)
 
         switch (result.mode) {
