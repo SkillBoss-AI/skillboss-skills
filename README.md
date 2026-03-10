@@ -16,13 +16,13 @@ SkillBoss is an AI skills platform by HeyBoss (backed by an OpenAI fund) that eq
 
 ## What's New
 
-🚀 **Claude 4.6 Opus** — SkillBoss now supports Claude 4.6 Opus, the first Opus model with 1M token context, Agent Teams, and Adaptive Thinking. Top scores on Terminal-Bench 2.0 (65.4%) and GDPval-AA (1606 Elo).
+**Claude 4.6 Opus** -- SkillBoss now supports Claude 4.6 Opus, the first Opus model with 1M token context, Agent Teams, and Adaptive Thinking. Top scores on Terminal-Bench 2.0 (65.4%) and GDPval-AA (1606 Elo).
 
-🎵 **Music Generation** — Generate music with AI using ElevenLabs Music, Google Lyria 2, Meta MusicGen, and Stable Audio 2.5. Text-to-music with customizable duration.
+**Music Generation** -- Generate music with AI using ElevenLabs Music, Google Lyria 2, Meta MusicGen, and Stable Audio 2.5. Text-to-music with customizable duration.
 
-📦 **One-Click Deploy** — Deploy full-stack apps (React + Hono) to Cloudflare Workers with a single command. Auto-provisions D1 databases, KV, and R2 storage.
+**One-Click Deploy** -- Deploy full-stack apps (React + Hono) to Cloudflare Workers with a single command. Auto-provisions D1 databases, KV, and R2 storage.
 
-<!-- 👆 Keep the 3 most recent items above. When adding a new one, move the oldest into the <details> block below. -->
+<!-- Keep the 3 most recent items above. When adding a new one, move the oldest into the <details> block below. -->
 <details>
 <summary>Previous updates</summary>
 
@@ -32,9 +32,9 @@ SkillBoss is an AI skills platform by HeyBoss (backed by an OpenAI fund) that eq
 
 ## Features
 
-- **100+ AI Services** — LLMs (Claude, GPT, Gemini, DeepSeek), image/video generation, TTS, and more
-- **MCP Server** — Native Model Context Protocol support for Claude Code, Cursor, Windsurf
-- **Skills Package** — Production-ready skills for AI coding agents
+- **100+ AI Services** --LLMs (Claude, GPT, Gemini, DeepSeek), image/video generation, TTS, and more
+- **MCP Server** --Native Model Context Protocol support for Claude Code, Cursor, Windsurf
+- **Skills Package** --Production-ready skills for AI coding agents
 - Deploy websites to Cloudflare Workers
 - Auto-provision D1/KV/R2 databases
 - Stripe payments integration

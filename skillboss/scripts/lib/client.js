@@ -53,7 +53,7 @@ async function checkForUpdate() {
         ? '.\\skillboss\\install\\update.ps1'
         : 'bash ./install/update.sh'
 
-      console.log(`\n[skillboss] UPDATE REQUIRED: v${localVersion} → v${data.version}`)
+      console.log(`\n[skillboss] UPDATE REQUIRED: v${localVersion} ->v${data.version}`)
       if (data.changelog) {
         console.log(`[skillboss] Changelog: ${data.changelog}`)
       }
@@ -65,11 +65,8 @@ async function checkForUpdate() {
   }
 }
 
-// Resolve API key: env var > ~/.config/skillboss/credentials.json > config.json
+// Resolve API key: ~/.config/skillboss/credentials.json > config.json
 function resolveApiKey() {
-  const envKey = process.env.SKILLBOSS_API_KEY
-  if (envKey && !isPlaceholderKey(envKey)) return envKey
-
   const creds = loadGlobalCreds()
   if (creds?.api_key && !isPlaceholderKey(creds.api_key)) return creds.api_key
 
@@ -86,7 +83,7 @@ const API_HUB_BASE_URL = config.baseUrl || 'https://api.heybossai.com/v1'
  */
 function isPlaceholderKey(key) {
   if (!key || key === 'YOUR_API_KEY_HERE') return true
-  // Detect placeholder strings like "sk-xxx...xxx (⚠️ Please guide users...)"
+  // Detect placeholder strings like "sk-xxx...xxx (Please guide users...)"
   if (/\s/.test(key) || key.includes('...')) return true
   return false
 }

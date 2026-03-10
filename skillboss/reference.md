@@ -43,7 +43,7 @@ Complete model list and detailed parameter documentation.
 **Vertex (Google Cloud):**
 
 - `vertex/gemini-2.5-pro` - Gemini 2.5 Pro
-- `vertex/gemini-2.5-flash` - Gemini 2.5 Flash (快速)
+- `vertex/gemini-2.5-flash` - Gemini 2.5 Flash (fast)
 - `vertex/gemini-2.5-flash-lite-preview-06-17` - Gemini 2.5 Flash Lite
 - `vertex/gemini-3-pro-preview` - Gemini 3 Pro Preview
 - `vertex/gemini-3-flash-preview` - Gemini 3 Flash Preview
@@ -173,7 +173,7 @@ Complete model list and detailed parameter documentation.
 
 ### pilot
 
-Smart model selector — auto-picks the best model for your task. **Use this first for any AI task.**
+Smart model selector --auto-picks the best model for your task. **Use this first for any AI task.**
 
 ```bash
 node ./scripts/api-hub.js pilot [options]
@@ -187,9 +187,9 @@ node ./scripts/api-hub.js pilot [options]
 | `--capability`  | No       | Semantic capability matching (e.g., "style transfer")              |
 | `--prefer`      | No       | Optimization: "price" / "quality" / "balanced" (default)           |
 | `--limit`       | No       | Max models to return (default: 3)                                  |
-| `--prompt`      | No       | Text prompt — triggers auto-execute with best model                |
-| `--text`        | No       | Text input for TTS — triggers auto-execute                         |
-| `--file`        | No       | Audio file path for STT — triggers auto-execute                    |
+| `--prompt`      | No       | Text prompt --triggers auto-execute with best model                |
+| `--text`        | No       | Text input for TTS --triggers auto-execute                         |
+| `--file`        | No       | Audio file path for STT --triggers auto-execute                    |
 | `--output`      | No       | Save result to file (image, video, music, tts)                     |
 | `--duration`    | No       | Duration in seconds (music, video)                                 |
 | `--voice-id`    | No       | Voice ID for TTS                                                   |

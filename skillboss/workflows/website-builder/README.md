@@ -50,10 +50,10 @@ node ./scripts/serve-build.js publish-static ./project --project-id my-site
 
 **On Success**, you will see:
 ```
-✅ Deployment successful!
-🔗 URL: https://my-site.skillboss.live
-📁 Files uploaded: 12
-🆔 Project ID: my-site
+Deployment successful!
+URL: https://my-site.skillboss.live
+Files uploaded: 12
+Project ID: my-site
 ```
 
 **IMPORTANT: Always tell the user:**
@@ -66,7 +66,7 @@ Example response to user:
 
 **On Failure**, you will see:
 ```
-❌ Error: [error message]
+Error: [error message]
 ```
 
 Common errors and solutions:
@@ -169,16 +169,16 @@ Tell user: "Your SkillBoss API key is invalid. Visit https://www.skillboss.co/ t
 ## Communication Guidelines
 
 **After successful deployment, ALWAYS tell the user:**
-1. ✅ "Deployment successful"
-2. 🔗 The exact URL they can click to visit
-3. 📁 How many files were uploaded
-4. 💡 How to update the site later
+1. "Deployment successful"
+2. The exact URL they can click to visit
+3. How many files were uploaded
+4. How to update the site later
 
 **Example success message:**
 ```
 Great news! Your website is now live!
 
-🔗 **Live URL**: https://your-site.skillboss.live
+**Live URL**: https://your-site.skillboss.live
 
 You can open this link in your browser to see your site. I uploaded 8 files including HTML, CSS, and images.
 
@@ -186,9 +186,9 @@ To update the site later, just modify the files and I'll redeploy with the same 
 ```
 
 **After failure, tell the user:**
-1. ❌ What went wrong
-2. 🔧 How to fix it
-3. 🔄 Offer to retry
+1. What went wrong
+2. How to fix it
+3. Offer to retry
 
 ## Tips
 

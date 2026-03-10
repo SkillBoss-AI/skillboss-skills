@@ -15,16 +15,14 @@ When building apps that need AI capabilities (image generation, TTS, chat, etc.)
 ## API Format
 
 **Base URL:** `https://api.heybossai.com/v1`
-**Auth:** `Authorization: Bearer ${SKILLBOSS_API_KEY}`
-**API Key:** Read from `skillboss/config.json` -> `apiKey` field
+**Auth:** `Authorization: Bearer <your-api-key>`
+**API Key:** Read from `~/.config/skillboss/credentials.json` -> `api_key` field, or `skillboss/config.json` -> `apiKey` field
 
 ## Code Examples (TypeScript/JavaScript)
 
 ```typescript
-// Environment variable setup
-// Add to .env: SKILLBOSS_API_KEY=<key from skillboss/config.json>
-
-const SKILLBOSS_API_KEY = process.env.SKILLBOSS_API_KEY
+// Read API key from credentials file or config.json
+const API_KEY = '<your-api-key>' // from ~/.config/skillboss/credentials.json or config.json
 const API_BASE = 'https://api.heybossai.com/v1'
 
 // ============================================================================
@@ -35,7 +33,7 @@ async function pilot(body: object): Promise<any> {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${SKILLBOSS_API_KEY}`
+      'Authorization': `Bearer ${API_KEY}`
     },
     body: JSON.stringify(body)
   })
@@ -62,7 +60,7 @@ async function chat(prompt: string): Promise<string> {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${SKILLBOSS_API_KEY}`
+      'Authorization': `Bearer ${API_KEY}`
     },
     body: JSON.stringify({
       model: 'bedrock/claude-4-5-sonnet', // or bedrock/claude-4-6-opus, openai/gpt-5, vertex/gemini-2.5-flash
@@ -90,7 +88,7 @@ async function generateImage(prompt: string, size?: string): Promise<string> {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${SKILLBOSS_API_KEY}`
+      'Authorization': `Bearer ${API_KEY}`
     },
     body: JSON.stringify({
       model,
@@ -129,7 +127,7 @@ async function textToSpeech(text: string): Promise<ArrayBuffer> {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${SKILLBOSS_API_KEY}`
+      'Authorization': `Bearer ${API_KEY}`
     },
     body: JSON.stringify({ model, inputs })
   })
@@ -148,7 +146,7 @@ async function speechToText(audioBuffer: ArrayBuffer, filename: string): Promise
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${SKILLBOSS_API_KEY}`
+      'Authorization': `Bearer ${API_KEY}`
     },
     body: JSON.stringify({
       model: 'openai/whisper-1',
@@ -174,7 +172,7 @@ async function generateMusic(prompt: string, duration?: number): Promise<string>
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${SKILLBOSS_API_KEY}`
+      'Authorization': `Bearer ${API_KEY}`
     },
     body: JSON.stringify({
       model,
@@ -201,7 +199,7 @@ async function generateVideo(prompt: string, duration?: number): Promise<string>
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${SKILLBOSS_API_KEY}`
+      'Authorization': `Bearer ${API_KEY}`
     },
     body: JSON.stringify({
       model,
@@ -225,7 +223,7 @@ async function imageToVideo(prompt: string, imageUrl: string, duration?: number)
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${SKILLBOSS_API_KEY}`
+      'Authorization': `Bearer ${API_KEY}`
     },
     body: JSON.stringify({
       model,
@@ -250,7 +248,7 @@ async function parseDocument(url: string): Promise<object> {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${SKILLBOSS_API_KEY}`
+      'Authorization': `Bearer ${API_KEY}`
     },
     body: JSON.stringify({
       model: 'reducto/parse',
@@ -275,7 +273,7 @@ async function sendVerificationCode(phoneNumber: string, ip?: string): Promise<o
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${SKILLBOSS_API_KEY}`
+      'Authorization': `Bearer ${API_KEY}`
     },
     body: JSON.stringify({ model: 'prelude/verify-send', inputs })
   })
@@ -289,7 +287,7 @@ async function checkVerificationCode(phoneNumber: string, code: string): Promise
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${SKILLBOSS_API_KEY}`
+      'Authorization': `Bearer ${API_KEY}`
     },
     body: JSON.stringify({
       model: 'prelude/verify-check',
@@ -315,7 +313,7 @@ async function sendSmsNotification(phoneNumber: string, templateId: string, vari
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${SKILLBOSS_API_KEY}`
+      'Authorization': `Bearer ${API_KEY}`
     },
     body: JSON.stringify({ model: 'prelude/notify-send', inputs })
   })
@@ -327,7 +325,7 @@ async function extractFromDocument(url: string, schema: object): Promise<object>
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${SKILLBOSS_API_KEY}`
+      'Authorization': `Bearer ${API_KEY}`
     },
     body: JSON.stringify({
       model: 'reducto/extract',
@@ -366,6 +364,5 @@ async function extractFromDocument(url: string, schema: object): Promise<object>
 ## Setup Steps
 
 1. Run `./scripts/skillboss auth trial` or `./scripts/skillboss auth login` to get an API key
-2. The key is auto-saved to `~/.config/skillboss/credentials.json` and exported as `SKILLBOSS_API_KEY`
-3. For app code, add `SKILLBOSS_API_KEY` to your project's `.env` file
-4. Use the code patterns above, adjusting for your specific model
+2. The key is auto-saved to `~/.config/skillboss/credentials.json` and `config.json`
+3. Use the code patterns above, adjusting for your specific model

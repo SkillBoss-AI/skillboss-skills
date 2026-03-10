@@ -234,7 +234,7 @@ async function listProducts(projectId) {
   }
 
   console.log(`Found ${products.length} product(s):\n`);
-  console.log("─".repeat(80));
+  console.log("-".repeat(80));
 
   for (const product of products) {
     console.log(`ID:          ${product.id}`);
@@ -251,7 +251,7 @@ async function listProducts(projectId) {
         `Description: ${product.description.substring(0, 60)}${product.description.length > 60 ? "..." : ""}`,
       );
     }
-    console.log("─".repeat(80));
+    console.log("-".repeat(80));
   }
 }
 
@@ -280,7 +280,7 @@ async function createProduct(projectId, productData) {
     projectId,
   );
 
-  console.log("\n✓ Product created successfully!");
+  console.log("\nProduct created successfully!");
   console.log(`ID: ${product.id}`);
   console.log(`Name: ${product.name}`);
   console.log(`Price: ${formatPrice(product.price, product.currency)}`);
@@ -297,7 +297,7 @@ async function updateProduct(projectId, productId, productData) {
     projectId,
   );
 
-  console.log("\n✓ Product updated successfully!");
+  console.log("\nProduct updated successfully!");
   console.log(JSON.stringify(product, null, 2));
 }
 
@@ -306,7 +306,7 @@ async function deleteProduct(projectId, productId) {
 
   await apiRequest("DELETE", `/admin-products/${productId}`, null, projectId);
 
-  console.log("\n✓ Product deleted successfully!");
+  console.log("\nProduct deleted successfully!");
 }
 
 function formatPrice(cents, currency = "usd") {

@@ -162,7 +162,7 @@ async function waitForOnboarding(apiKey, baseUrl, timeoutMs = 10 * 60 * 1000) {
  */
 function displayStatus(status) {
   console.log("\nStripe Account Status:");
-  console.log("─".repeat(40));
+  console.log("-".repeat(40));
 
   if (status.id) {
     console.log(`  Account ID:      ${status.id}`);
@@ -181,7 +181,7 @@ function displayStatus(status) {
     );
   }
 
-  console.log("─".repeat(40));
+  console.log("-".repeat(40));
 }
 
 // CLI argument parsing

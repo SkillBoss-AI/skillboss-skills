@@ -52,7 +52,7 @@ function spinner(message) {
       fail(final) { log(`  ${fail()} ${final}`) },
     }
   }
-  const frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
+  const frames = ['-', '\\', '|', '/']
   let i = 0
   const id = setInterval(() => {
     process.stderr.write(`\r  ${c.yellow(frames[i++ % frames.length])} ${message}`)
@@ -70,9 +70,9 @@ function spinner(message) {
   }
 }
 
-function ok()   { return c.green('✓') }
-function fail() { return c.red('✗') }
-function warn() { return c.yellow('!') }
+function ok()   { return c.green('[ok]') }
+function fail() { return c.red('[fail]') }
+function warn() { return c.yellow('[!]') }
 
 // ── Credential storage ───────────────────────────────────────────────
 
@@ -108,14 +108,9 @@ function isPlaceholder(key) {
 
 /**
  * Resolve the current API key.
- * Priority: env var > global creds > local config.json
+ * Priority: global creds > local config.json
  */
 function resolveKey() {
-  const envKey = process.env.SKILLBOSS_API_KEY
-  if (envKey && !isPlaceholder(envKey)) {
-    return { key: envKey, source: 'SKILLBOSS_API_KEY env var' }
-  }
-
   const creds = loadGlobalCreds()
   if (creds?.api_key && !isPlaceholder(creds.api_key)) {
     return { key: creds.api_key, source: '~/.config/skillboss/credentials.json', type: creds.type }
@@ -151,57 +146,6 @@ function persistKey(apiKey, type = 'trial') {
     saveLocalConfig(config)
     log(`  ${ok()} Updated ${c.dim('config.json')}`)
   }
-
-  const profile = exportToShellProfile(apiKey)
-  if (profile) {
-    log(`  ${ok()} Exported SKILLBOSS_API_KEY to ${c.dim(path.basename(profile))}`)
-  }
-
-  process.env.SKILLBOSS_API_KEY = apiKey
-}
-
-// ── Shell helpers ─────────────────────────────────────────────────────
-
-function getShellProfile() {
-  const shell = process.env.SHELL || ''
-  if (shell.includes('zsh')) return path.join(os.homedir(), '.zshrc')
-  if (shell.includes('bash')) {
-    const bp = path.join(os.homedir(), '.bash_profile')
-    if (fs.existsSync(bp)) return bp
-    return path.join(os.homedir(), '.bashrc')
-  }
-  return null
-}
-
-function exportToShellProfile(key) {
-  const profile = getShellProfile()
-  if (!profile) return false
-
-  try {
-    const content = fs.existsSync(profile) ? fs.readFileSync(profile, 'utf8') : ''
-    const line = `export SKILLBOSS_API_KEY="${key}"`
-
-    if (content.includes('SKILLBOSS_API_KEY=')) {
-      fs.writeFileSync(profile, content.replace(/export SKILLBOSS_API_KEY="[^"]*"/, line))
-    } else {
-      fs.appendFileSync(profile, `\n# SkillBoss API key\n${line}\n`)
-    }
-    return profile
-  } catch { return false }
-}
-
-function removeFromShellProfile() {
-  const profile = getShellProfile()
-  if (!profile || !fs.existsSync(profile)) return false
-
-  try {
-    let content = fs.readFileSync(profile, 'utf8')
-    if (!content.includes('SKILLBOSS_API_KEY=')) return false
-    content = content.replace(/\n?# SkillBoss API key\nexport SKILLBOSS_API_KEY="[^"]*"\n?/, '\n')
-    content = content.replace(/export SKILLBOSS_API_KEY="[^"]*"\n?/, '')
-    fs.writeFileSync(profile, content)
-    return profile
-  } catch { return false }
 }
 
 function openBrowser(url) {
@@ -313,7 +257,6 @@ function helpAuthTrial() {
   log('')
   log('  EXAMPLES')
   log(`    ${c.dim('$')} skillboss auth trial`)
-  log(`    ${c.dim('$')} export SKILLBOSS_API_KEY=$(skillboss auth trial)`)
   log('')
   log(`  To upgrade to a permanent account later: ${c.cyan('skillboss auth login')}`)
   log('')
@@ -338,7 +281,6 @@ function helpAuthLogout() {
   log('  Removes the API key from all credential stores:')
   log('    - ~/.config/skillboss/credentials.json')
   log('    - config.json (reset to placeholder)')
-  log('    - Shell profile (SKILLBOSS_API_KEY)')
   log('')
   log('  EXAMPLES')
   log(`    ${c.dim('$')} skillboss auth logout`)
@@ -356,7 +298,6 @@ function helpAuthToken() {
   log('')
   log('  EXAMPLES')
   log(`    ${c.dim('$')} skillboss auth token`)
-  log(`    ${c.dim('$')} export SKILLBOSS_API_KEY=$(skillboss auth token)`)
   log(`    ${c.dim('$')} curl -H "Authorization: Bearer $(skillboss auth token)" ...`)
   log('')
 }
@@ -492,11 +433,6 @@ async function browserSignIn(tempApiKey) {
 
         log('')
         log(`  ${c.bold(c.green("You're all set!"))}`)
-
-        const prof = getShellProfile()
-        if (prof) {
-          log(`  Restart your shell or run: ${c.cyan(`source ~/${path.basename(prof)}`)}`)
-        }
         log('')
         return
       }
@@ -578,11 +514,6 @@ async function cmdLogout(flags) {
     config.apiKey = 'YOUR_API_KEY_HERE'
     saveLocalConfig(config)
     log(`  ${ok()} Reset config.json`)
-  }
-
-  const profile = removeFromShellProfile()
-  if (profile) {
-    log(`  ${ok()} Removed from ${path.basename(profile)}`)
   }
 
   log('')

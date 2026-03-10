@@ -102,14 +102,14 @@ function _extractMediaUrl(result) {
 }
 
 /**
- * Pilot command — smart model selector and executor
+ * Pilot command --smart model selector and executor
  *
  * Modes:
- *   guide     — no args, returns overview
- *   discover  — --discover [--keyword X]
- *   recommend — --type X [--prefer X] [--limit N]
- *   execute   — --type X --prompt/--text/--file (auto-select + run)
- *   chain     — --chain '[...]'
+ *   guide     --no args, returns overview
+ *   discover  ----discover [--keyword X]
+ *   recommend ----type X [--prefer X] [--limit N]
+ *   execute   ----type X --prompt/--text/--file (auto-select + run)
+ *   chain     ----chain '[...]'
  */
 async function pilot(flags) {
   // Determine mode from flags
@@ -159,7 +159,7 @@ async function pilot(flags) {
   } else if (isChain) {
     return { mode: 'chain', data: result }
   } else if (isExecute) {
-    // Handle execute result — may need to download output
+    // Handle execute result --may need to download output
     // Pilot API nests the actual vendor result inside result.result
     const inner = result.result || result
     const output = flags.output
@@ -170,7 +170,7 @@ async function pilot(flags) {
       return { mode: 'execute', data: result, saved: output }
     }
 
-    // TTS binary — check if response has binary indicator
+    // TTS binary --check if response has binary indicator
     if (output && (inner.audio_base64 || result.audio_base64)) {
       const buffer = Buffer.from(inner.audio_base64 || result.audio_base64, 'base64')
       fs.writeFileSync(output, buffer)

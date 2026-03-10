@@ -59,12 +59,6 @@ Opens your browser to sign up or log in at skillboss.co. Trial credits transfer 
 ./scripts/skillboss auth status
 ```
 
-### Get API key for scripting:
-
-```bash
-export SKILLBOSS_API_KEY=$(./scripts/skillboss auth token)
-```
-
 ### Log out:
 
 ```bash
@@ -78,10 +72,9 @@ After authentication, your API key is saved to:
 | Location | Path |
 |----------|------|
 | Global credentials | `~/.config/skillboss/credentials.json` |
-| Shell profile | `SKILLBOSS_API_KEY` in `~/.zshrc` or `~/.bashrc` |
 | Skill config | `config.json` in the skill directory |
 
-**Resolution order:** `SKILLBOSS_API_KEY` env var > `~/.config/skillboss/credentials.json` > `config.json`
+**Resolution order:** `~/.config/skillboss/credentials.json` > `config.json`
 
 ### When balance is low
 

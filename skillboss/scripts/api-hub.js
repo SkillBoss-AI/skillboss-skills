@@ -90,7 +90,7 @@ async function main() {
 SkillBoss API Hub - Multi-Provider API Gateway
 
 Commands:
-  pilot        Smart model selector — auto-picks the best model for your task (RECOMMENDED)
+  pilot        Smart model selector --auto-picks the best model for your task (RECOMMENDED)
 
   run          Run a specific model by ID
   chat         Chat completions
@@ -122,7 +122,7 @@ Common Options:
   --output       Save response to file (tts, image, video)
   --no-fallback  Disable automatic fallback on errors (fallback is enabled by default)
 
-Pilot Examples (recommended — auto-selects best model for your task):
+Pilot Examples (recommended --auto-selects best model for your task):
   node api-hub.js pilot                                                          # See all capabilities
   node api-hub.js pilot --discover                                               # Browse available model types
   node api-hub.js pilot --discover --keyword "CEO"                               # Search models by keyword
@@ -166,7 +166,7 @@ Direct Model Calls (when you already have a model ID):
             if (d.matches) {
               console.log('\nMatches:')
               for (const m of d.matches) {
-                console.log(`  ${m.id || m.model} — ${m.display_name || m.name || ''}`)
+                console.log(`  ${m.id || m.model} --${m.display_name || m.name || ''}`)
               }
             }
             if (!d.types && !d.matches) {
@@ -220,7 +220,7 @@ Direct Model Calls (when you already have a model ID):
               console.log('\nWorkflow steps:')
               for (let i = 0; i < c.steps.length; i++) {
                 const step = c.steps[i]
-                console.log(`  Step ${i + 1}: ${step.type} → ${step.model || step.id || '(auto)'}`)
+                console.log(`  Step ${i + 1}: ${step.type} ->${step.model || step.id || '(auto)'}`)
                 if (step.pipe_hint) console.log(`    Pipe: ${step.pipe_hint}`)
               }
             } else {
@@ -791,7 +791,7 @@ async function checkForUpdates() {
 
     const data = await res.json()
     if (data.version && data.version !== localVersion) {
-      console.log(`\n[skillboss] Auto-updating: ${localVersion} → ${data.version}`)
+      console.log(`\n[skillboss] Auto-updating: ${localVersion} ->${data.version}`)
 
       // Find the skillboss directory (parent of scripts/)
       const scriptDir = __dirname
