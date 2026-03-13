@@ -1,0 +1,60 @@
+name: Commit-to-Metric Link
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  link-metrics:
+    runs-on: ubuntu-latest
+    # Only run if commit message contains [metric:...]
+    if: contains(github.event.head_commit.message, '[metric:')
+
+    steps:
+      - name: Parse metric tags and record
+        env:
+          API_URL: https://api.heybossai.com/v1/growth/commit-link
+          COMMIT_SECRET: ${{ secrets.COMMIT_METRIC_SECRET }}
+        run: |
+          COMMIT_SHA="${{ github.sha }}"
+          REPO="${{ github.event.repository.name }}"
+          BRANCH="${{ github.ref_name }}"
+          AUTHOR="${{ github.event.head_commit.author.name }}"
+          MESSAGE=$(echo '${{ toJSON(github.event.head_commit.message) }}' | jq -r '.')
+
+          echo "## Commit-to-Metric Link" >> $GITHUB_STEP_SUMMARY
+          echo "Commit: \`${COMMIT_SHA:0:8}\`" >> $GITHUB_STEP_SUMMARY
+          echo "Message: ${MESSAGE}" >> $GITHUB_STEP_SUMMARY
+
+          # Extract [metric:xxx,yyy] tags
+          METRICS=$(echo "$MESSAGE" | grep -oP '\[metric:([a-z0-9\-,]+)\]' | sed 's/\[metric://g;s/\]//g' | tr ',' '\n' | sort -u | jq -R . | jq -s .)
+
+          echo "Metrics found: ${METRICS}" >> $GITHUB_STEP_SUMMARY
+
+          if [ "$METRICS" = "[]" ] || [ -z "$METRICS" ]; then
+            echo "No valid metric tags found, skipping."
+            exit 0
+          fi
+
+          # Call api-hub to record the commit-metric link
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$API_URL" \
+            -H "Content-Type: application/json" \
+            -H "X-Commit-Secret: $COMMIT_SECRET" \
+            -d "{
+              \"commit_sha\": \"$COMMIT_SHA\",
+              \"repo\": \"$REPO\",
+              \"branch\": \"$BRANCH\",
+              \"author\": \"$AUTHOR\",
+              \"message\": $(echo "$MESSAGE" | jq -R -s .),
+              \"metrics\": $METRICS
+            }")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+
+          echo "API Response (HTTP $HTTP_CODE): $BODY" >> $GITHUB_STEP_SUMMARY
+
+          if [ "$HTTP_CODE" -ge 400 ]; then
+            echo "::warning::Failed to record commit-metric link (HTTP $HTTP_CODE)"
+          fi
