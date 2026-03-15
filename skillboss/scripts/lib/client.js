@@ -191,9 +191,8 @@ function handleGrowthHints(data) {
   if (!data) return
 
   // Pilot API nests vendor result; hints are at the top level of the response
-  const hints = data._tip || data._streak || data._savings || data._milestone || data._memory_hint
-    ? data
-    : (data.result && (data.result._tip || data.result._streak) ? data.result : null)
+  const hasHints = (obj) => obj && (obj._tip || obj._streak || obj._savings || obj._milestone || obj._memory_hint)
+  const hints = hasHints(data) ? data : (hasHints(data.result) ? data.result : null)
   if (!hints) return
 
   if (hints._streak) {
