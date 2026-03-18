@@ -11,6 +11,7 @@ NC='\033[0m'
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SKILL_DIR="$(dirname "$SCRIPT_DIR")"
+PACKS_DIR="$(dirname "$SKILL_DIR")"
 
 AUTO_OVERWRITE=false
 if [[ "$1" == "-y" ]]; then
@@ -53,6 +54,23 @@ install_skill() {
     cp -r "$SKILL_DIR" "$dest/skillboss"
     echo -e "${GREEN}OK $name${NC}: $dest/skillboss"
     ((installed++))
+
+    # Install sub-packs if available (backward-compatible: skip if not in zip)
+    for subpack in skillboss-image skillboss-video; do
+        if [ -d "$PACKS_DIR/$subpack" ]; then
+            if [ -d "$dest/$subpack" ]; then
+                if [ "$AUTO_OVERWRITE" = true ]; then
+                    rm -rf "$dest/$subpack"
+                else
+                    # Respect the same overwrite policy as the main pack
+                    echo -e "${YELLOW}Skipped ($subpack)${NC}: $dest/$subpack already exists (use -y to overwrite)"
+                    continue
+                fi
+            fi
+            cp -r "$PACKS_DIR/$subpack" "$dest/$subpack"
+            echo -e "${GREEN}OK $name ($subpack)${NC}: $dest/$subpack"
+        fi
+    done
 }
 
 # Claude Code

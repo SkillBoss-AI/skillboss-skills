@@ -8,6 +8,39 @@ allowed-tools: Bash, Read
 
 Multi-AI gateway for building and deploying full-stack applications with 50+ AI APIs.
 
+## Quick Execute
+
+Run any AI task directly — no discovery needed. The `pilot` command auto-selects the best model.
+
+```bash
+# Image generation
+node ./scripts/api-hub.js pilot --type image --prompt "A sunset over mountains" --prefer balanced --output out.png
+
+# Video generation
+node ./scripts/api-hub.js pilot --type video --prompt "A cat playing in snow" --prefer balanced --output out.mp4
+
+# Chat / LLM
+node ./scripts/api-hub.js pilot --type chat --prompt "Explain quantum computing" --prefer quality
+
+# Text-to-Speech
+node ./scripts/api-hub.js pilot --type tts --text "Hello, world!" --prefer price --output out.mp3
+
+# Web search
+node ./scripts/api-hub.js pilot --type search --query "latest AI news"
+
+# Speech-to-Text
+node ./scripts/api-hub.js pilot --type stt --file audio.m4a
+```
+
+**`--prefer` options:** `price` (cheapest) / `quality` (best) / `balanced` (default)
+
+**First time?** Get a free trial key first:
+```bash
+./scripts/skillboss auth trial
+```
+
+---
+
 ## When to Use This Skill
 
 Use this skill when the user wants to:
@@ -128,37 +161,19 @@ You can also proactively check for updates at any time:
 node ./scripts/api-hub.js version
 ```
 
-## How to Call Any AI Model (Start Here)
+## Advanced: Discover & Select Models
 
-**ALWAYS use the `pilot` command.** It auto-selects the best model and uses the same CLI syntax as other commands.
+Use the discover flow when you need to explore available models or want fine-grained control.
 
-**Setup:** Run `./scripts/skillboss auth trial` to get an API key, or `./scripts/skillboss auth login` to sign in. The key is saved automatically and used by all commands.
-
-### Step 1 -- Discover what's available:
+### Discover what's available:
 ```bash
 node ./scripts/api-hub.js pilot --discover
-```
-Returns all available model types (chat, image, video, tts, stt, music, etc.).
-
-### Step 2 -- Search by keyword:
-```bash
 node ./scripts/api-hub.js pilot --discover --keyword "CEO"
 ```
 
-### Step 3 -- Get recommendations:
+### Get recommendations (ranked by preference):
 ```bash
 node ./scripts/api-hub.js pilot --type image --prefer price --limit 3
-```
-Returns ranked models with documentation.
-
-### Step 4 -- Execute (auto-select best model):
-```bash
-node ./scripts/api-hub.js pilot --type image --prompt "A sunset over mountains" --output sunset.png
-node ./scripts/api-hub.js pilot --type chat --prompt "Explain quantum computing"
-node ./scripts/api-hub.js pilot --type tts --text "Hello world" --output hello.mp3
-node ./scripts/api-hub.js pilot --type stt --file recording.m4a
-node ./scripts/api-hub.js pilot --type music --prompt "upbeat electronic" --duration 30 --output track.mp3
-node ./scripts/api-hub.js pilot --type video --prompt "A cat playing" --output video.mp4
 ```
 
 ### Multi-step workflow:
@@ -166,7 +181,7 @@ node ./scripts/api-hub.js pilot --type video --prompt "A cat playing" --output v
 node ./scripts/api-hub.js pilot --chain '[{"type":"stt","prefer":"price"},{"type":"chat","capability":"summarize"}]'
 ```
 
-### Pilot Flags:
+### All Pilot Flags:
 | Flag | Description |
 |------|-------------|
 | `--discover` | Browse available types and models |
@@ -187,7 +202,7 @@ node ./scripts/api-hub.js pilot --chain '[{"type":"stt","prefer":"price"},{"type
 | `--chain '[...]'` | Multi-step workflow definition |
 
 ### Decision Flow:
-1. **Any AI task** -> Use `pilot` -- it auto-selects the best model
+1. **Any AI task** -> Use `pilot` (see Quick Execute above) -- auto-selects the best model
 2. **Multi-step task** -> Use `pilot --chain` -- it plans the workflow
 3. **Already have a model ID from pilot recommendations?** -> Use direct commands (see `commands.md`)
 
