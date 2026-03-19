@@ -159,7 +159,7 @@ function openBrowser(url) {
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)) }
 
-// ── API ───────────────────────────────────────────────────────────────
+// ── API (unauthenticated) ────────────────────────────────────────────
 
 async function provisionTempToken() {
   const headers = { 'Content-Type': 'application/json' }
@@ -187,6 +187,58 @@ async function pollBind(tempApiKey) {
   return resp.json()
 }
 
+// ── API (authenticated, Studio) ─────────────────────────────────────
+
+function requireKey() {
+  const resolved = resolveKey()
+  if (!resolved) {
+    log('')
+    log(`  ${fail()} Not logged in. Run ${c.cyan('skillboss auth login')} first.`)
+    log('')
+    process.exit(1)
+  }
+  return resolved.key
+}
+
+/** Compute Studio API base from API_BASE (strip trailing /v1 if present) */
+function studioUrl(endpoint) {
+  const base = API_BASE.replace(/\/v1$/, '')
+  return `${base}/v1/studio${endpoint}`
+}
+
+async function studioRequest(method, endpoint, body) {
+  const key = requireKey()
+  const opts = {
+    method,
+    headers: {
+      Authorization: `Bearer ${key}`,
+      'Content-Type': 'application/json',
+    },
+  }
+  if (body) opts.body = JSON.stringify(body)
+  const resp = await fetch(studioUrl(endpoint), opts)
+  if (!resp.ok) {
+    const text = await resp.text().catch(() => '')
+    let detail = ''
+    try { detail = JSON.parse(text).detail || text } catch { detail = text }
+    throw new Error(`API ${resp.status}: ${detail}`)
+  }
+  return resp.json()
+}
+
+async function studioStream(method, endpoint, body) {
+  const key = requireKey()
+  const opts = {
+    method,
+    headers: {
+      Authorization: `Bearer ${key}`,
+      'Content-Type': 'application/json',
+    },
+  }
+  if (body) opts.body = JSON.stringify(body)
+  return fetch(studioUrl(endpoint), opts)
+}
+
 // ── Help text ─────────────────────────────────────────────────────────
 
 function helpMain() {
@@ -197,7 +249,15 @@ function helpMain() {
   log(`    skillboss ${c.dim('<command>')} ${c.dim('[subcommand]')} ${c.dim('[flags]')}`)
   log('')
   log('  COMMANDS')
-  log(`    auth          Manage authentication with SkillBoss`)
+  log(`    auth            Manage authentication with SkillBoss`)
+  log(`    create          Create a new skill from template`)
+  log(`    test            Test a skill in E2B sandbox`)
+  log(`    publish         Publish a skill to the marketplace`)
+  log(`    list            List your skills`)
+  log(`    info            Show skill details`)
+  log(`    unpublish       Unpublish a skill`)
+  log(`    pricing         View or update skill pricing`)
+  log(`    preview-public  Preview auto-generated public description`)
   log('')
   log(`  Run ${c.cyan('skillboss <command> --help')} for more information about a command.`)
   log('')
@@ -302,7 +362,7 @@ function helpAuthToken() {
   log('')
 }
 
-// ── Commands ──────────────────────────────────────────────────────────
+// ── Auth Commands ────────────────────────────────────────────────────
 
 async function cmdLogin(flags) {
   if (flags.includes('--help') || flags.includes('-h')) {
@@ -542,6 +602,575 @@ async function cmdToken(flags) {
   }
 }
 
+// ── Studio Commands ─────────────────────────────────────────────────
+
+const DEFAULT_SKILL_MD = `---
+name: My Skill
+description: Describe what this skill does
+tools:
+  - Bash
+  - Read
+  - Write
+  - WebFetch
+tags:
+  - utility
+runtime:
+  timeout: 120
+  max_turns: 20
+---
+
+You are a helpful assistant. When given a task:
+
+1. Understand the user's request
+2. Use the available tools to complete it
+3. Return a clear, concise result
+`
+
+/** skillboss create <name> */
+async function cmdCreate(allArgs) {
+  if (allArgs.includes('--help') || allArgs.includes('-h') || allArgs.length === 0) {
+    log('')
+    log(`  ${c.bold('skillboss create')} <name> - Create a new skill from template`)
+    log('')
+    log('  Creates a directory with a SKILL.md template.')
+    log('')
+    log('  EXAMPLES')
+    log(`    ${c.dim('$')} skillboss create url-summarizer`)
+    log(`    ${c.dim('$')} skillboss create "My Cool Skill"`)
+    log('')
+    return
+  }
+
+  const name = allArgs.filter(a => !a.startsWith('--')).join(' ')
+  if (!name) {
+    log(`  ${fail()} Please provide a skill name`)
+    process.exit(1)
+  }
+
+  const dirName = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+  const dirPath = path.resolve(dirName)
+
+  if (fs.existsSync(dirPath)) {
+    log(`  ${fail()} Directory "${dirName}" already exists`)
+    process.exit(1)
+  }
+
+  fs.mkdirSync(dirPath, { recursive: true })
+
+  const skillMd = DEFAULT_SKILL_MD
+    .replace('name: My Skill', `name: ${name}`)
+    .replace('description: Describe what this skill does', `description: ${name}`)
+
+  fs.writeFileSync(path.join(dirPath, 'SKILL.md'), skillMd)
+
+  log('')
+  log(`  ${ok()} Created ${c.cyan(dirName)}/SKILL.md`)
+  log('')
+  log(`  Next steps:`)
+  log(`    1. Edit ${dirName}/SKILL.md`)
+  log(`    2. ${c.cyan(`skillboss test ${dirName} --input "your test input"`)}`)
+  log(`    3. ${c.cyan(`skillboss publish ${dirName}`)}`)
+  log('')
+}
+
+/** Read SKILL.md from a directory */
+function readSkillMd(skillDir) {
+  const resolved = path.resolve(skillDir)
+  const mdPath = path.join(resolved, 'SKILL.md')
+  if (!fs.existsSync(mdPath)) {
+    throw new Error(`SKILL.md not found in ${resolved}`)
+  }
+  return fs.readFileSync(mdPath, 'utf8')
+}
+
+/** Extract name from SKILL.md frontmatter */
+function parseSkillName(skillMd) {
+  const match = skillMd.match(/^name:\s*(.+)$/m)
+  return match ? match[1].trim() : 'unnamed'
+}
+
+/** skillboss test <dir> --input "..." */
+async function cmdTest(allArgs) {
+  if (allArgs.includes('--help') || allArgs.includes('-h') || allArgs.length === 0) {
+    log('')
+    log(`  ${c.bold('skillboss test')} <dir> --input "..." - Test a skill in E2B sandbox`)
+    log('')
+    log('  Uploads the skill as a temporary draft and runs it with the given input.')
+    log('  Output streams in real-time.')
+    log('')
+    log('  FLAGS')
+    log('    --input "..."    Test input message (required)')
+    log('')
+    log('  EXAMPLES')
+    log(`    ${c.dim('$')} skillboss test my-skill --input "Summarize https://example.com"`)
+    log('')
+    return
+  }
+
+  // Parse --input
+  let inputText = ''
+  const dirArgs = []
+  for (let i = 0; i < allArgs.length; i++) {
+    if (allArgs[i] === '--input' && i + 1 < allArgs.length) {
+      inputText = allArgs[++i]
+    } else if (!allArgs[i].startsWith('--')) {
+      dirArgs.push(allArgs[i])
+    }
+  }
+
+  const skillDir = dirArgs[0] || '.'
+  if (!inputText) {
+    log(`  ${fail()} --input is required`)
+    process.exit(1)
+  }
+
+  const skillMd = readSkillMd(skillDir)
+  const name = parseSkillName(skillMd)
+
+  log('')
+  log(`  Testing ${c.bold(name)}...`)
+  log('')
+
+  // Create temporary draft
+  const s = spinner('Uploading skill...')
+  let draft
+  try {
+    draft = await studioRequest('PUT', '/skills/temp', { name, skill_md: skillMd })
+    s.stop(`Draft created (${draft.id})`)
+  } catch (err) {
+    s.fail(err.message)
+    process.exit(1)
+  }
+
+  // Run test (SSE stream)
+  const s2 = spinner('Starting test run...')
+  let resp
+  try {
+    resp = await studioStream('POST', `/skills/${draft.id}/test`, { input: inputText })
+    if (!resp.ok) {
+      const text = await resp.text().catch(() => '')
+      s2.fail(`Test failed: ${resp.status} ${text}`)
+      process.exit(1)
+    }
+    s2.stop('Running...')
+  } catch (err) {
+    s2.fail(err.message)
+    process.exit(1)
+  }
+
+  // Stream SSE output
+  log('')
+  const startTime = Date.now()
+  const reader = resp.body.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+    buffer += decoder.decode(value, { stream: true })
+    const lines = buffer.split('\n\n')
+    buffer = lines.pop() || ''
+
+    for (const line of lines) {
+      if (!line.startsWith('data: ')) continue
+      const data = line.slice(6)
+      if (data === '[DONE]') continue
+
+      try {
+        const event = JSON.parse(data)
+        if (event.type === 'text-delta') {
+          process.stdout.write(event.delta || '')
+        } else if (event.type === 'progress') {
+          log(`  ${c.dim(event.message || event.status)}`)
+        } else if (event.type === 'error') {
+          log(`\n  ${c.red('Error:')} ${event.message}`)
+        } else if (event.type === 'file') {
+          log(`\n  ${c.cyan('File:')} ${event.name || 'output'} -> ${event.url}`)
+        } else if (event.type === 'finish') {
+          const elapsed = ((Date.now() - startTime) / 1000).toFixed(1)
+          log(`\n\n  ${c.dim(`Completed in ${elapsed}s`)}`)
+        }
+      } catch {
+        // Skip malformed events
+      }
+    }
+  }
+
+  log('')
+}
+
+/** skillboss publish <dir> [--visibility public|unlisted|private] [--price 0.005] */
+async function cmdPublish(allArgs) {
+  if (allArgs.includes('--help') || allArgs.includes('-h') || allArgs.length === 0) {
+    log('')
+    log(`  ${c.bold('skillboss publish')} <dir> [flags] - Publish a skill to the marketplace`)
+    log('')
+    log('  FLAGS')
+    log('    --visibility public|unlisted|private  (default: public)')
+    log('    --price 0.005                         Price per call in USD (default: 0)')
+    log('')
+    log('  EXAMPLES')
+    log(`    ${c.dim('$')} skillboss publish my-skill`)
+    log(`    ${c.dim('$')} skillboss publish my-skill --visibility unlisted --price 0.01`)
+    log('')
+    return
+  }
+
+  let visibility = 'public'
+  let price = 0
+  const dirArgs = []
+  for (let i = 0; i < allArgs.length; i++) {
+    if (allArgs[i] === '--visibility' && i + 1 < allArgs.length) {
+      visibility = allArgs[++i]
+    } else if (allArgs[i] === '--price' && i + 1 < allArgs.length) {
+      price = parseFloat(allArgs[++i]) || 0
+    } else if (!allArgs[i].startsWith('--')) {
+      dirArgs.push(allArgs[i])
+    }
+  }
+
+  const skillDir = dirArgs[0] || '.'
+  const skillMd = readSkillMd(skillDir)
+  const name = parseSkillName(skillMd)
+
+  log('')
+  log(`  Publishing ${c.bold(name)}...`)
+  log('')
+
+  // Create/update draft
+  const s = spinner('Uploading skill...')
+  let draft
+  try {
+    draft = await studioRequest('PUT', '/skills/temp', { name, skill_md: skillMd })
+    s.stop(`Draft ready (${draft.id})`)
+  } catch (err) {
+    s.fail(err.message)
+    process.exit(1)
+  }
+
+  // Preview public description
+  const s2 = spinner('Generating public description...')
+  let preview
+  try {
+    preview = await studioRequest('GET', `/skills/${draft.id}/preview-public`)
+    s2.stop('Description generated')
+  } catch (err) {
+    s2.fail(err.message)
+    log(`  ${warn()} Publishing without auto-generated description`)
+    preview = null
+  }
+
+  if (preview?.public_description) {
+    const pd = preview.public_description
+    log('')
+    log(`  ${c.bold('Public Description Preview:')}`)
+    if (pd.what_i_can_do)   log(`  What I can do:    ${pd.what_i_can_do}`)
+    if (pd.when_to_use_me)  log(`  When to use me:   ${pd.when_to_use_me}`)
+    if (pd.limitations)     log(`  Limitations:      ${pd.limitations}`)
+    if (pd.data_handling)   log(`  Data handling:    ${c.dim(pd.data_handling)}`)
+    log('')
+  }
+
+  // Confirm
+  const answer = await prompt(`  Publish ${c.bold(name)} as ${visibility}${price > 0 ? ` at $${price}/call` : ''}? ${c.dim('[y/N]')} `)
+  if (answer.toLowerCase() !== 'y') {
+    log('  Cancelled.')
+    log('')
+    return
+  }
+
+  // Publish
+  const s3 = spinner('Publishing...')
+  try {
+    const result = await studioRequest('POST', `/skills/${draft.id}/publish`, {
+      visibility,
+      price,
+    })
+    s3.stop(`Published as ${c.cyan(result.slug || name)}`)
+    log('')
+    if (result.version) log(`  Version: ${result.version}`)
+    log(`  Status:  ${c.green('active')}`)
+    log('')
+  } catch (err) {
+    s3.fail(err.message)
+    process.exit(1)
+  }
+}
+
+/** skillboss list */
+async function cmdList(allArgs) {
+  if (allArgs.includes('--help') || allArgs.includes('-h')) {
+    log('')
+    log(`  ${c.bold('skillboss list')} - List your skills`)
+    log('')
+    log('  EXAMPLES')
+    log(`    ${c.dim('$')} skillboss list`)
+    log('')
+    return
+  }
+
+  const s = spinner('Fetching skills...')
+  try {
+    const data = await studioRequest('GET', '/skills')
+    const skills = data.skills || []
+    s.stop(`${skills.length} skill${skills.length !== 1 ? 's' : ''}`)
+
+    if (skills.length === 0) {
+      log('')
+      log(`  ${c.dim('No skills yet.')} Create one with ${c.cyan('skillboss create <name>')}`)
+      log('')
+      return
+    }
+
+    log('')
+    for (const sk of skills) {
+      const icon = sk.status === 'active' ? c.green('*') : c.yellow('~')
+      const priceStr = sk.price > 0 ? ` $${sk.price}/call` : ''
+      log(`  ${icon} ${c.bold(sk.slug || sk.name)} ${c.dim(`v${sk.version || '0.0.0'}`)}${priceStr}`)
+      if (sk.description) log(`    ${c.dim(sk.description)}`)
+    }
+    log('')
+  } catch (err) {
+    s.fail(err.message)
+    process.exit(1)
+  }
+}
+
+/** skillboss info <slug> */
+async function cmdInfo(allArgs) {
+  if (allArgs.includes('--help') || allArgs.includes('-h') || allArgs.length === 0) {
+    log('')
+    log(`  ${c.bold('skillboss info')} <slug-or-id> - Show skill details`)
+    log('')
+    log('  EXAMPLES')
+    log(`    ${c.dim('$')} skillboss info @alice/url-summarizer`)
+    log('')
+    return
+  }
+
+  const slug = allArgs.filter(a => !a.startsWith('--'))[0]
+  if (!slug) {
+    log(`  ${fail()} Please provide a skill slug or ID`)
+    process.exit(1)
+  }
+
+  const s = spinner('Fetching...')
+  try {
+    // Try by ID first, then search by slug in list
+    let skill
+    try {
+      skill = await studioRequest('GET', `/skills/${encodeURIComponent(slug)}`)
+    } catch {
+      // Might be a slug — search in user's skills
+      const data = await studioRequest('GET', '/skills')
+      skill = (data.skills || []).find(sk => sk.slug === slug || sk.name === slug)
+      if (!skill) throw new Error(`Skill "${slug}" not found`)
+    }
+
+    s.stop(skill.name)
+    log('')
+    log(`  ${c.bold('Name:')}        ${skill.name}`)
+    log(`  ${c.bold('Slug:')}        ${skill.slug || 'N/A'}`)
+    log(`  ${c.bold('Status:')}      ${skill.status === 'active' ? c.green(skill.status) : c.yellow(skill.status)}`)
+    log(`  ${c.bold('Visibility:')}  ${skill.visibility || 'public'}`)
+    log(`  ${c.bold('Version:')}     ${skill.version || '0.0.0'}`)
+    log(`  ${c.bold('Price:')}       ${skill.price > 0 ? `$${skill.price}/call` : 'Free'}`)
+    if (skill.tags?.length) log(`  ${c.bold('Tags:')}        ${skill.tags.join(', ')}`)
+    if (skill.description) log(`  ${c.bold('Description:')} ${skill.description}`)
+
+    if (skill.public_description) {
+      const pd = skill.public_description
+      log('')
+      if (pd.what_i_can_do)  log(`  ${c.bold('What it does:')}  ${pd.what_i_can_do}`)
+      if (pd.when_to_use_me) log(`  ${c.bold('When to use:')}   ${pd.when_to_use_me}`)
+      if (pd.limitations)    log(`  ${c.bold('Limitations:')}   ${pd.limitations}`)
+    }
+    log('')
+  } catch (err) {
+    s.fail(err.message)
+    process.exit(1)
+  }
+}
+
+/** skillboss unpublish <slug-or-id> */
+async function cmdUnpublish(allArgs) {
+  if (allArgs.includes('--help') || allArgs.includes('-h') || allArgs.length === 0) {
+    log('')
+    log(`  ${c.bold('skillboss unpublish')} <slug-or-id> - Unpublish a skill`)
+    log('')
+    log('  EXAMPLES')
+    log(`    ${c.dim('$')} skillboss unpublish @alice/url-summarizer`)
+    log('')
+    return
+  }
+
+  const slug = allArgs.filter(a => !a.startsWith('--'))[0]
+  if (!slug) {
+    log(`  ${fail()} Please provide a skill slug or ID`)
+    process.exit(1)
+  }
+
+  // Find skill ID
+  const data = await studioRequest('GET', '/skills')
+  const skill = (data.skills || []).find(sk => sk.slug === slug || sk.id === slug || sk.name === slug)
+  if (!skill) {
+    log(`  ${fail()} Skill "${slug}" not found`)
+    process.exit(1)
+  }
+
+  const answer = await prompt(`  Unpublish ${c.bold(skill.name)}? ${c.dim('[y/N]')} `)
+  if (answer.toLowerCase() !== 'y') {
+    log('  Cancelled.')
+    return
+  }
+
+  const s = spinner('Unpublishing...')
+  try {
+    await studioRequest('DELETE', `/skills/${skill.id}`)
+    s.stop(`Unpublished ${skill.name}`)
+    log('')
+  } catch (err) {
+    s.fail(err.message)
+    process.exit(1)
+  }
+}
+
+/** skillboss pricing <slug-or-id> [--set 0.005] */
+async function cmdPricing(allArgs) {
+  if (allArgs.includes('--help') || allArgs.includes('-h') || allArgs.length === 0) {
+    log('')
+    log(`  ${c.bold('skillboss pricing')} <slug-or-id> [--set <price>] - View or update pricing`)
+    log('')
+    log('  FLAGS')
+    log('    --set <price>    Set new price per call in USD')
+    log('')
+    log('  EXAMPLES')
+    log(`    ${c.dim('$')} skillboss pricing @alice/url-summarizer`)
+    log(`    ${c.dim('$')} skillboss pricing @alice/url-summarizer --set 0.01`)
+    log('')
+    return
+  }
+
+  let newPrice = null
+  const dirArgs = []
+  for (let i = 0; i < allArgs.length; i++) {
+    if (allArgs[i] === '--set' && i + 1 < allArgs.length) {
+      newPrice = parseFloat(allArgs[++i])
+      if (isNaN(newPrice) || newPrice < 0) {
+        log(`  ${fail()} Price must be a non-negative number`)
+        process.exit(1)
+      }
+    } else if (!allArgs[i].startsWith('--')) {
+      dirArgs.push(allArgs[i])
+    }
+  }
+
+  const slug = dirArgs[0]
+  if (!slug) {
+    log(`  ${fail()} Please provide a skill slug or ID`)
+    process.exit(1)
+  }
+
+  // Find skill
+  const data = await studioRequest('GET', '/skills')
+  const skill = (data.skills || []).find(sk => sk.slug === slug || sk.id === slug || sk.name === slug)
+  if (!skill) {
+    log(`  ${fail()} Skill "${slug}" not found`)
+    process.exit(1)
+  }
+
+  if (newPrice === null) {
+    log('')
+    log(`  ${c.bold(skill.name)}`)
+    log(`  Current price: ${skill.price > 0 ? `$${skill.price}/call` : 'Free'}`)
+    log('')
+    log(`  To update: ${c.cyan(`skillboss pricing ${slug} --set <price>`)}`)
+    log('')
+    return
+  }
+
+  const s = spinner('Updating price...')
+  try {
+    await studioRequest('PUT', `/skills/${skill.id}`, { price: newPrice })
+    s.stop(`Price updated to ${newPrice > 0 ? `$${newPrice}/call` : 'Free'}`)
+    log('')
+  } catch (err) {
+    s.fail(err.message)
+    process.exit(1)
+  }
+}
+
+/** skillboss preview-public <dir-or-id> */
+async function cmdPreviewPublic(allArgs) {
+  if (allArgs.includes('--help') || allArgs.includes('-h') || allArgs.length === 0) {
+    log('')
+    log(`  ${c.bold('skillboss preview-public')} <dir-or-id> - Preview public description`)
+    log('')
+    log('  Generates a preview of the auto-generated public description.')
+    log('  If a directory is given, uploads as temp draft first.')
+    log('')
+    log('  EXAMPLES')
+    log(`    ${c.dim('$')} skillboss preview-public my-skill`)
+    log(`    ${c.dim('$')} skillboss preview-public 507f1f77bcf86cd799439011`)
+    log('')
+    return
+  }
+
+  const target = allArgs.filter(a => !a.startsWith('--'))[0]
+  if (!target) {
+    log(`  ${fail()} Please provide a skill directory or ID`)
+    process.exit(1)
+  }
+
+  let skillId = target
+
+  // If target looks like a directory, upload as temp draft
+  if (fs.existsSync(path.resolve(target, 'SKILL.md'))) {
+    const skillMd = readSkillMd(target)
+    const name = parseSkillName(skillMd)
+    const s = spinner('Uploading draft...')
+    try {
+      const draft = await studioRequest('PUT', '/skills/temp', { name, skill_md: skillMd })
+      skillId = draft.id
+      s.stop('Draft uploaded')
+    } catch (err) {
+      s.fail(err.message)
+      process.exit(1)
+    }
+  }
+
+  const s = spinner('Generating public description...')
+  try {
+    const preview = await studioRequest('GET', `/skills/${skillId}/preview-public`)
+    s.stop('Done')
+    const pd = preview.public_description
+    if (!pd) {
+      log(`  ${warn()} No public description generated`)
+      return
+    }
+
+    log('')
+    log(`  ${c.bold('Public Description Preview')}`)
+    log('')
+    if (pd.what_i_can_do)    log(`  ${c.bold('What I can do:')}     ${pd.what_i_can_do}`)
+    if (pd.when_to_use_me)   log(`  ${c.bold('When to use me:')}    ${pd.when_to_use_me}`)
+    if (pd.example_input)    log(`  ${c.bold('Example input:')}     ${pd.example_input}`)
+    if (pd.example_output) {
+      const output = typeof pd.example_output === 'string'
+        ? pd.example_output
+        : JSON.stringify(pd.example_output, null, 2)
+      log(`  ${c.bold('Example output:')}    ${output}`)
+    }
+    if (pd.limitations)      log(`  ${c.bold('Limitations:')}       ${pd.limitations}`)
+    if (pd.data_handling)    log(`  ${c.bold('Data handling:')}     ${c.dim(pd.data_handling)}`)
+    log('')
+  } catch (err) {
+    s.fail(err.message)
+    process.exit(1)
+  }
+}
+
 // ── Main ──────────────────────────────────────────────────────────────
 
 const args = process.argv.slice(2)
@@ -577,6 +1206,19 @@ async function main() {
         log('')
         process.exit(1)
     }
+  }
+
+  // Studio commands (top-level, no subcommand grouping)
+  const studioArgs = args.slice(1) // everything after the command name
+  switch (command) {
+    case 'create':         return cmdCreate(studioArgs)
+    case 'test':           return cmdTest(studioArgs)
+    case 'publish':        return cmdPublish(studioArgs)
+    case 'list':           return cmdList(studioArgs)
+    case 'info':           return cmdInfo(studioArgs)
+    case 'unpublish':      return cmdUnpublish(studioArgs)
+    case 'pricing':        return cmdPricing(studioArgs)
+    case 'preview-public': return cmdPreviewPublic(studioArgs)
   }
 
   log('')
