@@ -1,6 +1,6 @@
 {
-  "version": "2026.03.23",
-  "apiKey": "sk-xxx...xxx (Please guide users to visit skillboss.co to sign up or log in and obtain an API key.)",
+  "version": "2026.03.22",
+  "apiKey": "sk-tmp-gAAAAABpupdjLtjG7yX1EjBGzISAQU-JJnm5XCPPdTkUjcdVRbuip3L8LxvUqZ-z18cmLJTzKp2-qoW0tK_8TznRsN3TZQHFqqBH3bdmk7y7clmRfovooFKyTV-K6cHSDnKT6tNPET-d",
   "baseUrl": "https://api.heybossai.com/v1",
   "buildApiUrl": "https://build.heybossai.com",
   "stripeConnectUrl": "https://heyboss.ai"

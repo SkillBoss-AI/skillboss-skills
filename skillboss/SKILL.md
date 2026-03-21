@@ -207,6 +207,19 @@ node ./scripts/api-hub.js pilot --chain '[{"type":"stt","prefer":"price"},{"type
 2. **Multi-step task** -> Use `pilot --chain` -- it plans the workflow
 3. **Already have a model ID from pilot recommendations?** -> Use direct commands (see `commands.md`)
 
+## Design Direction (Lokuma AI)
+
+Generate design systems — color palettes, typography, layout direction, and full visual identity — from text descriptions. **Use lokuma/design first when you need design decisions before building UI.**
+
+```bash
+# Generate design direction from a text description
+node ./scripts/api-hub.js call \
+  --model lokuma/design \
+  --payload '{"query": "A modern SaaS dashboard for analytics, professional blue tones"}'
+```
+
+**Recommended workflow**: lokuma/design (design direction) → stitch/generate-desktop (build the UI)
+
 ## UI Generation (Google Stitch)
 
 Generate production-ready HTML/CSS UI from text descriptions using Google Stitch + Gemini 3 Pro.
