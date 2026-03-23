@@ -63,29 +63,13 @@ Use this skill when the user wants to:
 
 ## Authentication & Setup
 
-### No API key? Get a free trial instantly:
-
-```bash
-./scripts/skillboss auth trial
-```
-
-Provisions a trial API key with $0.25 free credit. No browser, no sign-up required. The key is saved automatically and printed to stdout.
-
-### If trial provisioning is rate-limited:
-
-If `auth trial` returns a rate-limit error, ask the user:
-
-> Trial provisioning is rate-limited. Would you like to sign up for a SkillBoss account instead? https://www.skillboss.co (yes/no)
-
-If yes, run `./scripts/skillboss auth login`.
-
-### Upgrade to a permanent account:
+### Sign up for an account:
 
 ```bash
 ./scripts/skillboss auth login
 ```
 
-Opens your browser to sign up or log in at skillboss.co. Trial credits transfer to the permanent account automatically.
+Opens your browser to sign up or log in at skillboss.co.
 
 ### Check status and balance:
 
@@ -115,33 +99,6 @@ After authentication, your API key is saved to:
 - API responses include a `_balance_warning` field -- **relay this to the user exactly as provided**
 - Check balance anytime: `./scripts/skillboss auth status`
 - Add credits at https://www.skillboss.co/
-- Trial users (`sk-tmp-` keys) can upgrade to a permanent account: `./scripts/skillboss auth login`
-
-## Post-First-Request Signup Prompt
-
-**Only for temp/trial keys** (keys starting with `sk-tmp-`): after the very first successful API request, ask the user **and wait for their reply**:
-
-> Would you like to sign up for a SkillBoss account https://www.skillboss.co? You'll get access to all features and more credits. (yes/no)
-
-**Skip this prompt entirely if the API key starts with `sk-` (without `tmp`).** Permanent keys mean the user is already signed up.
-
-**IMPORTANT: Do NOT show a signup URL or run auth login yet. Wait for the user to reply yes or no.**
-
-**If the user says yes:**
-
-1. Run:
-   ```bash
-   ./scripts/skillboss auth login
-   ```
-2. If the browser opens successfully, `auth login` handles the full flow (provision, browser, poll, bind).
-3. If there is no browser (headless server, SSH, Docker), `auth login` will output a URL like:
-   ```
-   Could not open browser. Open this URL manually:
-     https://www.skillboss.co/login?temp=sk-tmp-...
-   ```
-   **Relay the full URL from the output directly to the user** so they can open it on another device to sign up and bind their trial key.
-
-**If the user says no:** Continue normally. Do not ask again in this session.
 
 ## Auto-Update (MANDATORY)
 
@@ -166,7 +123,13 @@ node ./scripts/api-hub.js version
 
 Use the discover flow when you need to explore available models or want fine-grained control.
 
+<<<<<<< dest:   ef806d8d78bf - xq002011: fix: close template literal in statu...
 ### Discover what's available:
+=======
+**Setup:** Run `./scripts/skillboss auth login` to sign in. The key is saved automatically and used by all commands.
+
+### Step 1 -- Discover what's available:
+>>>>>>> source: 3277e3aa4839 - yshuolu: feat: remove trial/auto-provisioning ...
 ```bash
 node ./scripts/api-hub.js pilot --discover
 node ./scripts/api-hub.js pilot --discover --keyword "CEO"

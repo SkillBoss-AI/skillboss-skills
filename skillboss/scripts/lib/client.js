@@ -89,8 +89,7 @@ function isPlaceholderKey(key) {
 }
 
 /**
- * Auto-provision a free trial token if the current key is a placeholder.
- * Persists the new key to config.json so subsequent calls reuse it.
+ * Ensure we have a valid API key. Throws if no key is configured.
  * @returns {Promise<string>} A valid API key
  */
 async function ensureApiKey() {
@@ -99,85 +98,18 @@ async function ensureApiKey() {
     return API_HUB_API_KEY
   }
 
-  // 2. Re-resolve from all sources (another process may have provisioned)
+  // 2. Re-resolve from all sources (another process may have saved one)
   const freshKey = resolveApiKey()
   if (!isPlaceholderKey(freshKey)) {
     API_HUB_API_KEY = freshKey
     return API_HUB_API_KEY
   }
 
-  // 3. Auto-provision from API Hub
-  console.error('[skillboss] Provisioning free trial token...')
-  const provisionHeaders = { 'Content-Type': 'application/json' }
-  if (process.env.SKILLBOSS_E2E_SECRET) {
-    provisionHeaders['X-E2E-Secret'] = process.env.SKILLBOSS_E2E_SECRET
-  }
-  const resp = await fetch(`${API_HUB_BASE_URL}/temp-token/provision`, {
-    method: 'POST',
-    headers: provisionHeaders,
-  })
-
-  if (!resp.ok) {
-    const errText = await resp.text().catch(() => '')
-    throw new Error(
-      `Failed to provision free trial token (${resp.status}). ` +
-        `Visit https://www.skillboss.co to get an API key.\n${errText}`,
-    )
-  }
-
-  const data = await resp.json()
-
-  // 4. Save to ~/.config/skillboss/credentials.json
-  try {
-    const credsDir = path.dirname(GLOBAL_CREDS_PATH)
-    fs.mkdirSync(credsDir, { recursive: true })
-    fs.writeFileSync(GLOBAL_CREDS_PATH, JSON.stringify({
-      api_key: data.api_key,
-      type: 'trial',
-      updated_at: new Date().toISOString(),
-    }, null, 2) + '\n')
-    try { fs.chmodSync(GLOBAL_CREDS_PATH, 0o600) } catch {}
-  } catch (writeErr) {
-    console.error(`[skillboss] Warning: could not save credentials: ${writeErr.message}`)
-  }
-
-  // 5. Also save to config.json
-  try {
-    const freshConfig = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'))
-    freshConfig.apiKey = data.api_key
-    fs.writeFileSync(CONFIG_PATH, JSON.stringify(freshConfig, null, 2) + '\n')
-  } catch (writeErr) {
-    console.error(`[skillboss] Warning: could not save key to config.json: ${writeErr.message}`)
-  }
-
-  const bindUrl = `https://www.skillboss.co/login?temp=${encodeURIComponent(data.api_key)}`
-  console.error(
-    `[skillboss] Free trial active ($${data.balance_usd} credit). ` +
-      `Sign up & keep your credits: ${bindUrl}`,
+  // 3. No key available
+  throw new Error(
+    'No API key configured. Run: skillboss auth login\n' +
+      'Or visit https://www.skillboss.co to get an API key.',
   )
-  API_HUB_API_KEY = data.api_key
-  return API_HUB_API_KEY
-}
-
-/**
- * Check if a key is a temp/trial key by its prefix.
- * Temp keys start with "sk-tmp-", permanent keys with "sk-".
- * @param {string} key
- * @returns {boolean}
- */
-function isTempKey(key) {
-  return typeof key === 'string' && key.startsWith('sk-tmp-')
-}
-
-/**
- * Build the login URL that includes the current temp token ID
- * so the sign-up flow can auto-associate the trial credits.
- * @returns {string|null}
- */
-function buildBindUrl() {
-  if (isPlaceholderKey(API_HUB_API_KEY)) return null
-  if (!isTempKey(API_HUB_API_KEY)) return null
-  return `https://www.skillboss.co/login?temp=${encodeURIComponent(API_HUB_API_KEY)}`
 }
 
 /**
@@ -245,12 +177,6 @@ function handleBalanceWarning(data) {
     console.error(`[skillboss] ${warning}`)
   } else if (typeof warning === 'object' && warning.message) {
     console.error(`[skillboss] ${warning.message}`)
-  }
-
-  // Use server-provided bind_url, or construct one with the temp token ID
-  const bindUrl = (typeof warning === 'object' && warning.bind_url) || buildBindUrl()
-  if (bindUrl) {
-    console.error(`[skillboss] Sign up & keep your credits: ${bindUrl}`)
   }
 }
 
@@ -475,7 +401,6 @@ module.exports = {
   API_HUB_API_KEY,
   API_HUB_BASE_URL,
   isPlaceholderKey,
-  isTempKey,
   ensureApiKey,
   handleBalanceWarning,
   checkForUpdate,

@@ -363,6 +363,6 @@ async function extractFromDocument(url: string, schema: object): Promise<object>
 
 ## Setup Steps
 
-1. Run `./scripts/skillboss auth trial` or `./scripts/skillboss auth login` to get an API key
+1. Run `./scripts/skillboss auth login` to get an API key
 2. The key is auto-saved to `~/.config/skillboss/credentials.json` and `config.json`
 3. Use the code patterns above, adjusting for your specific model

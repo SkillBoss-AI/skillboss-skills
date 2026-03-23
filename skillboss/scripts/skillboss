@@ -8,11 +8,7 @@ const { execSync } = require('child_process')
 const os = require('os')
 
 // ── Constants ────────────────────────────────────────────────────────
-const API_BASE = process.env.SKILLBOSS_API_BASE || 'https://api.heybossai.com/v1'
 const WEB_BASE = process.env.SKILLBOSS_WEB_BASE || 'https://www.skillboss.co'
-const POLL_INTERVAL_MS = 2000
-const POLL_TIMEOUT_MS = 5 * 60 * 1000
-
 // Credential locations
 const GLOBAL_CONFIG_DIR = path.join(os.homedir(), '.config', 'skillboss')
 const GLOBAL_CREDS_PATH = path.join(GLOBAL_CONFIG_DIR, 'credentials.json')
@@ -20,7 +16,6 @@ const LOCAL_CONFIG_PATH = path.join(__dirname, '..', 'config.json')
 
 // ── Terminal helpers ─────────────────────────────────────────────────
 const hasColor = process.stderr.isTTY && !process.env.NO_COLOR
-const isTTY = process.stderr.isTTY
 
 const c = {
   green:  s => hasColor ? `\x1b[32m${s}\x1b[0m` : s,
@@ -41,33 +36,6 @@ function prompt(question) {
       resolve(answer.trim())
     })
   })
-}
-
-function spinner(message) {
-  if (!isTTY) {
-    log(`  - ${message}`)
-    return {
-      update(msg) { log(`  - ${msg}`) },
-      stop(final) { log(`  ${ok()} ${final}`) },
-      fail(final) { log(`  ${fail()} ${final}`) },
-    }
-  }
-  const frames = ['-', '\\', '|', '/']
-  let i = 0
-  const id = setInterval(() => {
-    process.stderr.write(`\r  ${c.yellow(frames[i++ % frames.length])} ${message}`)
-  }, 80)
-  return {
-    update(msg) { message = msg },
-    stop(final) {
-      clearInterval(id)
-      process.stderr.write(`\r  ${ok()} ${final}${' '.repeat(40)}\n`)
-    },
-    fail(final) {
-      clearInterval(id)
-      process.stderr.write(`\r  ${fail()} ${final}${' '.repeat(40)}\n`)
-    },
-  }
 }
 
 function ok()   { return c.green('[ok]') }
@@ -132,7 +100,7 @@ function maskKey(key) {
 /**
  * Persist key to all credential stores.
  */
-function persistKey(apiKey, type = 'trial') {
+function persistKey(apiKey, type = 'permanent') {
   saveGlobalCreds({
     api_key: apiKey,
     type,
@@ -155,36 +123,6 @@ function openBrowser(url) {
     else                                    execSync(`xdg-open "${url}"`, { stdio: 'ignore' })
     return true
   } catch { return false }
-}
-
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)) }
-
-// ── API ───────────────────────────────────────────────────────────────
-
-async function provisionTempToken() {
-  const headers = { 'Content-Type': 'application/json' }
-  if (process.env.SKILLBOSS_E2E_SECRET) {
-    headers['X-E2E-Secret'] = process.env.SKILLBOSS_E2E_SECRET
-  }
-  const resp = await fetch(`${API_BASE}/temp-token/provision`, {
-    method: 'POST',
-    headers,
-  })
-  if (!resp.ok) {
-    const body = await resp.text().catch(() => '')
-    throw new Error(`Provisioning failed (${resp.status}): ${body}`)
-  }
-  return resp.json()
-}
-
-async function pollBind(tempApiKey) {
-  const resp = await fetch(`${API_BASE}/temp-token/poll-bind`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ temp_api_key: tempApiKey }),
-  })
-  if (!resp.ok) throw new Error(`Poll failed (${resp.status})`)
-  return resp.json()
 }
 
 // ── Help text ─────────────────────────────────────────────────────────
@@ -212,7 +150,6 @@ function helpAuth() {
   log('')
   log('  COMMANDS')
   log(`    login         Sign in to a SkillBoss account ${c.dim('(opens browser)')}`)
-  log(`    trial         Provision a free trial key instantly ${c.dim('(no browser)')}`)
   log(`    status        Show current authentication state`)
   log(`    logout        Remove stored credentials`)
   log(`    token         Output API key to stdout ${c.dim('(for scripting)')}`)
@@ -229,39 +166,15 @@ function helpAuthLogin() {
   log('  This is the recommended way to authenticate.')
   log('')
   log('  What happens:')
-  log(`    1. A trial key is provisioned automatically ${c.dim('(behind the scenes)')}`)
-  log('    2. Your browser opens to skillboss.co')
-  log('    3. You sign up or log in')
-  log(`    4. Click "Bind & Transfer Credits" to link your trial`)
-  log('    5. A permanent API key replaces the trial key')
+  log('    1. Your browser opens to skillboss.co')
+  log('    2. You sign up or log in')
+  log('    3. Copy your API key from the console')
   log('')
   log('  FLAGS')
   log(`    --help        Show this help`)
   log('')
   log('  EXAMPLES')
   log(`    ${c.dim('$')} skillboss auth login`)
-  log('')
-  log(`  See also: ${c.cyan('skillboss auth trial --help')} for non-interactive provisioning.`)
-  log('')
-}
-
-function helpAuthTrial() {
-  log('')
-  log(`  ${c.bold('skillboss auth trial')} - Provision a free trial key`)
-  log('')
-  log('  Instantly provisions a trial API key with $0.25 free credit.')
-  log('  No browser, no sign-up, no prompts.')
-  log('')
-  log('  Designed for agents and scripts that just need a working key.')
-  log('  The key is saved to all credential stores and printed to stdout.')
-  log('')
-  log('  FLAGS')
-  log(`    --help        Show this help`)
-  log('')
-  log('  EXAMPLES')
-  log(`    ${c.dim('$')} skillboss auth trial`)
-  log('')
-  log(`  To upgrade to a permanent account later: ${c.cyan('skillboss auth login')}`)
   log('')
 }
 
@@ -270,7 +183,7 @@ function helpAuthStatus() {
   log(`  ${c.bold('skillboss auth status')} - Show current authentication state`)
   log('')
   log('  Displays the current API key, where it was loaded from,')
-  log('  whether it is a trial or permanent key, and your balance.')
+  log('  and your current balance.')
   log('')
   log('  EXAMPLES')
   log(`    ${c.dim('$')} skillboss auth status`)
@@ -294,9 +207,7 @@ function helpAuthToken() {
   log('')
   log(`  ${c.bold('skillboss auth token')} - Output API key to stdout`)
   log('')
-  log('  Prints the current API key to stdout. If no key exists,')
-  log('  a trial key is provisioned automatically.')
-  log('')
+  log('  Prints the current API key to stdout.')
   log('  Designed for scripting and piping. Status messages go to stderr.')
   log('')
   log('  EXAMPLES')
@@ -377,9 +288,9 @@ async function cmdLogin(flags) {
 
   log('')
 
-  // Already has a permanent key
-  if (current?.type === 'permanent') {
-    log(`  ${ok()} Already signed in with a permanent account.`)
+  // Already has a key
+  if (current) {
+    log(`  ${ok()} Already signed in.`)
     log(`    Key:    ${maskKey(current.key)}`)
     log(`    Source: ${current.source}`)
     log('')
@@ -388,128 +299,33 @@ async function cmdLogin(flags) {
     return
   }
 
-  // Has a trial key — skip provisioning, go straight to browser upgrade
-  if (current) {
-    log(`  ${warn()} You have a trial key. Let's upgrade to a permanent account.`)
-    log(`    Key: ${maskKey(current.key)}`)
-    log('')
-    await browserSignIn(current.key)
-    return
-  }
-
-  // No key at all — provision trial behind the scenes, then browser upgrade
+  // No key — open browser to sign up
   log(`  ${c.bold('Signing in to SkillBoss...')}`)
   log('')
 
-  const s = spinner('Preparing...')
-  let data
-  try {
-    data = await provisionTempToken()
-    s.stop(`Trial key ready ${c.dim(`($${data.balance_usd} credit)`)}`)
-  } catch (err) {
-    s.fail(`Failed: ${err.message}`)
-    log('')
-    log(`  Visit ${c.cyan(WEB_BASE)} to get an API key manually.`)
-    log('')
-    process.exit(1)
-  }
-
-  log('')
-  persistKey(data.api_key, 'trial')
-  log('')
-
-  await browserSignIn(data.api_key)
-}
-
-async function cmdTrial(flags) {
-  if (flags.includes('--help') || flags.includes('-h')) {
-    helpAuthTrial()
-    return
-  }
-
-  const current = resolveKey()
-
-  // Already have a working key — just output it
-  if (current) {
-    log('')
-    log(`  ${ok()} Already have a ${current.type || 'valid'} key.`)
-    log(`    Key: ${maskKey(current.key)}`)
-    log('')
-    process.stdout.write(current.key)
-    return
-  }
-
-  // Provision trial key
-  log('')
-  try {
-    const data = await provisionTempToken()
-    persistKey(data.api_key, 'trial')
-    log(`  ${ok()} Trial key provisioned ${c.dim(`($${data.balance_usd} credit)`)}`)
-    log('')
-    log(`  Upgrade anytime: ${c.cyan('skillboss auth login')}`)
-    log('')
-    process.stdout.write(data.api_key)
-  } catch (err) {
-    log(`  ${fail()} ${err.message}`)
-    log('')
-    process.exit(1)
-  }
-}
-
-/**
- * Browser-based sign-in flow.
- * Opens the bind URL, polls until the temp token is bound to a real account.
- */
-async function browserSignIn(tempApiKey) {
-  const bindUrl = `${WEB_BASE}/login?temp=${encodeURIComponent(tempApiKey)}`
-
-  const opened = openBrowser(bindUrl)
+  const loginUrl = `${WEB_BASE}/login`
+  const opened = openBrowser(loginUrl)
   if (opened) {
     log(`  ${ok()} Opened ${c.cyan(WEB_BASE)} in your browser`)
   } else {
     log(`  ${warn()} Could not open browser. Open this URL manually:`)
   }
-  log(`    ${c.dim(bindUrl)}`)
+  log(`    ${c.dim(loginUrl)}`)
   log('')
-  log(`  Sign up or log in, then click ${c.bold('"Bind & Transfer Credits"')}.`)
+  log(`  Sign up or log in, then copy your API key from the console.`)
   log('')
 
-  // Poll for completion
-  const s = spinner('Waiting for authentication...')
-  const start = Date.now()
-
-  while (Date.now() - start < POLL_TIMEOUT_MS) {
-    await sleep(POLL_INTERVAL_MS)
-
-    try {
-      const result = await pollBind(tempApiKey)
-
-      if (result.status === 'bound' && result.permanent_api_key) {
-        s.stop('Authentication complete!')
-        log('')
-
-        persistKey(result.permanent_api_key, 'permanent')
-
-        if (result.migrated_usd > 0) {
-          log(`  ${ok()} Migrated $${result.migrated_usd.toFixed(2)} trial credits`)
-        }
-
-        log('')
-        log(`  ${c.bold(c.green("You're all set!"))}`)
-        log('')
-        return
-      }
-    } catch {
-      // Transient error — keep polling
-    }
+  const apiKey = await prompt(`  ? ${c.bold('Paste your API key:')} `)
+  if (!apiKey || isPlaceholder(apiKey)) {
+    log(`  ${fail()} No valid API key provided.`)
+    log('')
+    process.exit(1)
   }
 
-  s.fail('Timed out (5 minutes)')
+  persistKey(apiKey, 'permanent')
   log('')
-  log(`  Complete sign-in at: ${c.cyan(bindUrl)}`)
-  log(`  Then run ${c.cyan('skillboss auth login')} again.`)
+  log(`  ${c.bold(c.green("You're all set!"))}`)
   log('')
-  process.exit(1)
 }
 
 async function cmdStatus(flags) {
@@ -532,16 +348,6 @@ async function cmdStatus(flags) {
   log(`  ${ok()} Logged in`)
   log(`    Key:    ${maskKey(current.key)}`)
   log(`    Source: ${current.source}`)
-
-  try {
-    const result = await pollBind(current.key)
-    log(`    Type:   ${result.status === 'bound' ? 'permanent' : 'trial'}`)
-    if (result.balance_usd !== undefined) {
-      log(`    Balance: $${result.balance_usd.toFixed(2)}`)
-    }
-  } catch {
-    log(`    Type:   permanent`)
-  }
 
   log('')
 }
@@ -594,15 +400,8 @@ async function cmdToken(flags) {
     return
   }
 
-  // Auto-provision
-  try {
-    const data = await provisionTempToken()
-    persistKey(data.api_key, 'trial')
-    process.stdout.write(data.api_key)
-  } catch (err) {
-    process.stderr.write(`Error: ${err.message}\n`)
-    process.exit(1)
-  }
+  process.stderr.write(`No API key found. Run: skillboss auth login\n`)
+  process.exit(1)
 }
 
 // ── Config commands ───────────────────────────────────────────────────
@@ -829,7 +628,6 @@ async function main() {
 
     switch (subcommand) {
       case 'login':   return cmdLogin(flags)
-      case 'trial':   return cmdTrial(flags)
       case 'status':  return cmdStatus(flags)
       case 'logout':  return cmdLogout(flags)
       case 'token':   return cmdToken(flags)
