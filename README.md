@@ -32,7 +32,7 @@ SkillBoss is an AI skills platform by HeyBoss (backed by an OpenAI fund) that eq
 
 ## Features
 
-- **100+ AI Services** --LLMs (Claude, GPT, Gemini, DeepSeek), image/video generation, TTS, and more
+- **684+ AI Models from 61 Vendors** --LLMs (Claude, GPT, Gemini, DeepSeek), image/video generation, TTS, and more
 - **MCP Server** --Native Model Context Protocol support for Claude Code, Cursor, Windsurf
 - **Skills Package** --Production-ready skills for AI coding agents
 - Deploy websites to Cloudflare Workers
