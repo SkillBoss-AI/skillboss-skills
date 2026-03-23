@@ -1,12 +1,12 @@
 ---
 name: skillboss
-description: "Multi-AI gateway for fullstack apps. Build/deploy websites, React apps, SaaS, ecommerce to Cloudflare Workers. DB (D1/KV/R2), Stripe payments/subscriptions/checkout, auth (login, OAuth, OTP), AI image/audio/video/TTS generation, UI generation (Google Stitch), email, presentations/slides, web scraping/search, CEO interviews/quotes, document parsing/extraction, SMS verification, serverless deploy/API/webhook."
+description: "Unified AI gateway with 684+ models from 61 vendors. One API key for LLMs (Claude, GPT-5, Gemini, DeepSeek), image gen (Flux, DALL-E), video (Veo, MiniMax), TTS/STT (ElevenLabs, Whisper), web search (Perplexity, SerpAPI), social media data (TikTok, Instagram, YouTube), web scraping (Firecrawl), UI generation (Google Stitch), document parsing (Reducto), email, SMS, music gen, and more. Build/deploy fullstack apps to Cloudflare Workers with D1/KV/R2, Stripe payments, auth (OAuth, OTP)."
 allowed-tools: Bash, Read
 ---
 
 # SkillBoss Skill
 
-Multi-AI gateway for building and deploying full-stack applications with 50+ AI APIs.
+Unified AI gateway with 684+ models from 61 vendors — LLMs, image, video, audio, search, social media data, web scraping — through a single OpenAI-compatible API.
 
 ## Quick Execute
 
