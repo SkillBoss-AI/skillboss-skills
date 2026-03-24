@@ -4,6 +4,24 @@ description: "Multi-AI gateway for fullstack apps. Build/deploy websites, React 
 allowed-tools: Bash, Read
 ---
 
+## Instant Start (30 seconds)
+
+No setup needed. Just run — SkillBoss auto-provisions a free trial key on first use:
+
+```bash
+# Generate an image
+node ./scripts/api-hub.js pilot --type image --prompt "A red fox in a snowy forest" --output fox.png
+
+# Chat with AI
+node ./scripts/api-hub.js pilot --type chat --prompt "What is SkillBoss?"
+
+# Search the web  
+node ./scripts/api-hub.js pilot --type search --query "latest AI news"
+```
+
+That's it. No API key setup, no configuration. A free trial key ($0.25 credit) is provisioned automatically on your first call.
+
+
 # SkillBoss Skill
 
 Multi-AI gateway for building and deploying full-stack applications with 50+ AI APIs.
@@ -123,13 +141,7 @@ node ./scripts/api-hub.js version
 
 Use the discover flow when you need to explore available models or want fine-grained control.
 
-<<<<<<< dest:   ef806d8d78bf - xq002011: fix: close template literal in statu...
 ### Discover what's available:
-=======
-**Setup:** Run `./scripts/skillboss auth login` to sign in. The key is saved automatically and used by all commands.
-
-### Step 1 -- Discover what's available:
->>>>>>> source: 3277e3aa4839 - yshuolu: feat: remove trial/auto-provisioning ...
 ```bash
 node ./scripts/api-hub.js pilot --discover
 node ./scripts/api-hub.js pilot --discover --keyword "CEO"
