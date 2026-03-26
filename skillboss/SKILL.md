@@ -6,56 +6,49 @@ allowed-tools: Bash, Read
 
 ## Instant Start (30 seconds)
 
-No setup needed. Just run — SkillBoss auto-provisions a free trial key on first use:
-
 ```bash
+# Install CLI
+npm install -g @skillboss/cli
+
+# Login (get key at skillboss.co/console)
+skb login -k YOUR_API_KEY
+
 # Generate an image
-node ./scripts/api-hub.js pilot --type image --prompt "A red fox in a snowy forest" --output fox.png
+skb task image -b '{"prompt": "A red fox in a snowy forest"}' -o fox.png
 
 # Chat with AI
-node ./scripts/api-hub.js pilot --type chat --prompt "What is SkillBoss?"
+skb api call deepseek-v3 -b '{"messages":[{"role":"user","content":"What is SkillBoss?"}]}'
 
-# Search the web  
-node ./scripts/api-hub.js pilot --type search --query "latest AI news"
+# Search the web
+skb api call linkup/search -b '{"query": "latest AI news"}'
 ```
-
-That's it. No API key setup, no configuration. A free trial key ($0.25 credit) is provisioned automatically on your first call.
-
 
 # SkillBoss Skill
 
-Multi-AI gateway for building and deploying full-stack applications with 50+ AI APIs.
+Multi-AI gateway for building and deploying full-stack applications with 100+ AI APIs.
 
 ## Quick Execute
 
-Run any AI task directly — no discovery needed. The `pilot` command auto-selects the best model.
+Run any AI task directly. `skb task` auto-selects the best model.
 
 ```bash
 # Image generation
-node ./scripts/api-hub.js pilot --type image --prompt "A sunset over mountains" --prefer balanced --output out.png
+skb task image -b '{"prompt": "A sunset over mountains"}' -o out.png
 
 # Video generation
-node ./scripts/api-hub.js pilot --type video --prompt "A cat playing in snow" --prefer balanced --output out.mp4
-
-# Chat / LLM
-node ./scripts/api-hub.js pilot --type chat --prompt "Explain quantum computing" --prefer quality
+skb task video -b '{"prompt": "A cat playing in snow"}' -o out.mp4
 
 # Text-to-Speech
-node ./scripts/api-hub.js pilot --type tts --text "Hello, world!" --prefer price --output out.mp3
-
-# Web search
-node ./scripts/api-hub.js pilot --type search --query "latest AI news"
+skb task tts -b '{"text": "Hello, world!"}' --prefer price -o out.mp3
 
 # Speech-to-Text
-node ./scripts/api-hub.js pilot --type stt --file audio.m4a
+skb task stt -f audio.m4a
+
+# Or call a specific model directly
+skb api call deepseek-v3 -b '{"messages":[{"role":"user","content":"Explain quantum computing"}]}' --stream
 ```
 
 **`--prefer` options:** `price` (cheapest) / `quality` (best) / `balanced` (default)
-
-**First time?** Get a free trial key first:
-```bash
-./scripts/skillboss auth trial
-```
 
 ---
 
@@ -81,116 +74,96 @@ Use this skill when the user wants to:
 
 ## Authentication & Setup
 
-### Sign up for an account:
+### Login:
 
 ```bash
-./scripts/skillboss auth login
+skb login -k YOUR_API_KEY
 ```
 
-Opens your browser to sign up or log in at skillboss.co.
+Get your key at https://skillboss.co/console
 
-### Check status and balance:
+### Check status:
 
 ```bash
-./scripts/skillboss auth status
+skb account
 ```
 
 ### Log out:
 
 ```bash
-./scripts/skillboss auth logout
+skb logout
 ```
 
 ### Where credentials are stored
 
-After authentication, your API key is saved to:
+After authentication, your API key is saved to `~/.config/skillboss/credentials.json`.
 
-| Location | Path |
-|----------|------|
-| Global credentials | `~/.config/skillboss/credentials.json` |
-| Skill config | `config.json` in the skill directory |
-
-**Resolution order:** `~/.config/skillboss/credentials.json` > `config.json`
+You can also set `SKILLBOSS_API_KEY` environment variable, or pass `-k <key>` per command.
 
 ### When balance is low
 
 - API responses include a `_balance_warning` field -- **relay this to the user exactly as provided**
-- Check balance anytime: `./scripts/skillboss auth status`
+- Check balance anytime: `skb account`
 - Add credits at https://www.skillboss.co/
-
-## Auto-Update (MANDATORY)
-
-**CRITICAL: After EVERY API call, check the output for `[skillboss] UPDATE REQUIRED`.** If you see this message:
-
-1. **Stop what you are doing**
-2. **Update immediately by pulling the latest changes:**
-   ```bash
-   cd ./skillboss && git pull origin main
-   ```
-   Or simply ask your AI agent: "Please update the skillboss skill to the latest version"
-3. **Then re-run your original command**
-
-This ensures you always have the latest models, features, and bug fixes. **Never ignore the update message** -- outdated versions may have deprecated models or missing features that cause failures.
-
-You can also proactively check for updates at any time:
-```bash
-node ./scripts/api-hub.js version
-```
 
 ## Advanced: Discover & Select Models
 
 Use the discover flow when you need to explore available models or want fine-grained control.
 
-### Discover what's available:
+### Browse available types:
 ```bash
-node ./scripts/api-hub.js pilot --discover
-node ./scripts/api-hub.js pilot --discover --keyword "CEO"
+skb task
+skb api types
+```
+
+### Search by keyword:
+```bash
+skb task search "CEO interviews"
+skb task search "web scraping"
 ```
 
 ### Get recommendations (ranked by preference):
 ```bash
-node ./scripts/api-hub.js pilot --type image --prefer price --limit 3
+skb task image --prefer price --limit 3
+```
+
+### View model details + params:
+```bash
+skb api show flux-1.1-pro
+skb api show deepseek-v3
 ```
 
 ### Multi-step workflow:
 ```bash
-node ./scripts/api-hub.js pilot --chain '[{"type":"stt","prefer":"price"},{"type":"chat","capability":"summarize"}]'
+skb task chain '[{"type":"stt","prefer":"price"},{"type":"chat","capability":"summarize"}]'
 ```
 
-### All Pilot Flags:
+### All Task Flags:
 | Flag | Description |
 |------|-------------|
-| `--discover` | Browse available types and models |
-| `--keyword X` | Search models by keyword (with --discover) |
-| `--type X` | Model type: chat, image, video, tts, stt, music, etc. |
-| `--capability X` | Semantic capability matching (e.g., "style transfer") |
+| `-b, --body <json>` | JSON inputs (triggers execute mode) |
+| `-f, --file <path>` | File input for STT (triggers execute mode) |
+| `-o, --output <path>` | Save result to file |
+| `-s, --stream` | Stream response (chat) |
 | `--prefer X` | Optimization: "price" / "quality" / "balanced" (default) |
+| `--capability X` | Semantic capability matching (e.g., "style transfer") |
 | `--limit N` | Max models to return (default: 3) |
-| `--prompt X` | Text prompt (triggers auto-execute) |
-| `--text X` | Text input for TTS (triggers auto-execute) |
-| `--file X` | Audio file for STT (triggers auto-execute) |
-| `--output X` | Save result to file |
-| `--duration N` | Duration in seconds (music, video) |
-| `--voice-id X` | Voice ID for TTS |
-| `--image X` | Image URL for video/image tasks |
-| `--size X` | Image size |
-| `--system X` | System prompt for chat |
-| `--chain '[...]'` | Multi-step workflow definition |
+| `--include-docs` | Include API docs in recommendations |
+| `--raw` | Output raw JSON |
+| `-k, --key <key>` | API key override |
 
 ### Decision Flow:
-1. **Any AI task** -> Use `pilot` (see Quick Execute above) -- auto-selects the best model
-2. **Multi-step task** -> Use `pilot --chain` -- it plans the workflow
-3. **Already have a model ID from pilot recommendations?** -> Use direct commands (see `commands.md`)
+1. **Any AI task** -> Use `skb task <type>` -- auto-selects the best model
+2. **Multi-step task** -> Use `skb task chain` -- it plans the workflow
+3. **Already know the model?** -> Use `skb api call <model> -b '...'`
+4. **Need params?** -> Use `skb api show <model>`
 
 ## Design Direction (Lokuma AI)
 
 Generate design systems — color palettes, typography, layout direction, and full visual identity — from text descriptions. **Use lokuma/design first when you need design decisions before building UI.**
 
 ```bash
-# Generate design direction from a text description
-node ./scripts/api-hub.js run \
-  --model lokuma/design \
-  --inputs '{"query": "A modern SaaS dashboard for analytics, professional blue tones"}'
+skb api call lokuma/design -b '{"query": "A modern SaaS dashboard for analytics, professional blue tones"}'
 ```
 
 **Recommended workflow**: lokuma/design (design direction) → stitch/generate-desktop (build the UI)
@@ -201,54 +174,28 @@ Generate production-ready HTML/CSS UI from text descriptions using Google Stitch
 
 ```bash
 # Generate desktop UI (default)
-node ./scripts/api-hub.js stitch-generate \
-  --prompt "A SaaS pricing page with 3 tiers: Free, Pro, Enterprise"
+skb api call stitch/generate-desktop -b '{"prompt": "A SaaS pricing page with 3 tiers: Free, Pro, Enterprise"}'
 
 # Generate mobile UI
-node ./scripts/api-hub.js stitch-generate \
-  --prompt "A mobile checkout form with card payment" \
-  --model stitch/generate-mobile
+skb api call stitch/generate-mobile -b '{"prompt": "A mobile checkout form with card payment"}'
 
 # Fast generation (Gemini Flash, lower cost)
-node ./scripts/api-hub.js stitch-generate \
-  --prompt "A simple contact page" \
-  --model stitch/generate-fast
+skb api call stitch/generate-fast -b '{"prompt": "A simple contact page"}'
 
 # Edit an existing screen
-node ./scripts/api-hub.js stitch-edit \
-  --screen-id "<screen_id>" \
-  --project-id "<project_id>" \
-  --prompt "Change the primary color to blue and make the CTA button larger"
-
-# Generate 3 variants
-node ./scripts/api-hub.js stitch-variants \
-  --screen-id "<screen_id>" \
-  --project-id "<project_id>" \
-  --count 3
+skb api call stitch/edit -b '{"screen_id": "<id>", "project_id": "<id>", "prompt": "Change the primary color to blue"}'
 
 # Export HTML to file
-node ./scripts/api-hub.js stitch-html \
-  --screen-id "<screen_id>" \
-  --project-id "<project_id>" \
-  --output index.html
+skb api call stitch/html -b '{"screen_id": "<id>", "project_id": "<id>"}' -o index.html
 ```
 
-**Response includes `hosting_recommendation`** — use SkillBoss Hosting to deploy generated UI to Cloudflare Workers instantly:
-```
-💡 Deploy with SkillBoss Hosting: Use `skillboss hosting deploy` to deploy to Cloudflare Workers in seconds
-   Learn more: https://skillboss.co/hosting
-```
-
-**Via pilot (auto-select):**
+**Via task (auto-select):**
 ```bash
 # Discover available UI models
-node ./scripts/api-hub.js pilot --type ui
+skb task ui_generation
 
-# Auto-generate UI (pilot picks best model)
-node ./scripts/api-hub.js pilot --type ui --prompt "A SaaS dashboard with sidebar"
-
-# Save screenshot to file
-node ./scripts/api-hub.js pilot --type ui --prompt "A landing page" --output preview.png
+# Auto-generate UI
+skb task ui_generation -b '{"prompt": "A SaaS dashboard with sidebar"}'
 ```
 
 **Models:**
