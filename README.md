@@ -51,31 +51,42 @@ https://github.com/user-attachments/assets/7bb8c3ff-593d-45f5-821d-9cd3fc05d33e
 
 ## Get Started
 
-### 1. Install (Recommended: Ask Your AI Agent)
+### Option 1: CLI (recommended)
 
-Simply send this message to your AI agent (Claude Code, Codex, OpenClaw, etc.):
+```bash
+# Install
+npm install -g @skillboss/cli
+
+# Login
+skb login -k sk-your-api-key
+
+# Browse APIs
+skb api types
+skb api list --type chat
+skb api show deepseek-v3
+
+# Call any model
+skb api call deepseek-v3 -b '{"messages":[{"role":"user","content":"Hello"}]}'
+skb api call flux-1.1-pro -b '{"prompt":"A sunset"}' -o sunset.png
+
+# Smart task navigator
+skb task image -b '{"prompt":"A sunset"}' -o sunset.png
+skb task search "web scraping"
+```
+
+Or with npx (no install): `npx -y @skillboss/cli api types -k sk-your-key`
+
+Get your API key at [skillboss.co/console](https://skillboss.co/console).
+
+### Option 2: Skill Pack (for AI agents)
+
+Send this to your AI agent (Claude Code, Codex, OpenClaw, etc.):
 
 ```
-Please install https://github.com/heeyo-life/skillboss-skills to your skills directory.
+set up skillboss.co/skill.md
 ```
 
-The AI will automatically clone and install SkillBoss Skills for you.
-
-### 2. Get API Key & Configure
-
-1. Visit [skillboss.co](https://skillboss.co) to sign up or log in
-2. Go to [skillboss.co/console](https://skillboss.co/console) to find your API key
-3. Send this message to your AI agent:
-
-```
-Please set my SkillBoss API key: sk-your-api-key-here in the skillboss config.json file.
-```
-
-Done! Your AI agent is now equipped with SkillBoss skills.
-
----
-
-### MCP Server Installation
+### Option 3: MCP Server
 
 For MCP-compatible clients (Claude Code, Cursor, Windsurf, Cline):
 
