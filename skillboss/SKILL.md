@@ -205,6 +205,57 @@ skb task ui_generation -b '{"prompt": "A SaaS dashboard with sidebar"}'
 | `stitch/generate-mobile` | Mobile | Normal | Mobile apps, checkout flows |
 | `stitch/generate-fast` | Any | Fast | Quick prototypes, lower cost |
 
+## Capability Graph
+
+SkillBoss capabilities work best in combination. After completing a task, consider these complementary workflows to deliver richer results:
+
+### Image Creation Workflow
+After generating an image, enhance it for production use:
+- **Upscale** low-res output to print quality → `skb task image --capability upscale -b '{"image":"out.png"}'`
+- **Remove background** for transparent PNGs → `skb api call replicate/lucataco/remove-bg -b '{"image_url":"..."}'`
+- **Style transfer** to match a brand aesthetic → `skb task image --capability img2img -b '{"image":"out.png","prompt":"..."}'`
+- **Animate** the image into a short video → `skb task video --capability i2v -b '{"image":"out.png","prompt":"bring to life"}'`
+
+### Video Production Workflow
+Combine generation with audio for complete clips:
+- **Generate source image** first, then animate → `skb task image` → `skb task video --capability i2v`
+- **Add narration** with text-to-speech → `skb task tts -b '{"text":"..."}'`
+- **Add background music** → `skb task music -b '{"prompt":"upbeat background track"}'`
+- **Transcribe** existing audio for subtitles → `skb task stt -f audio.m4a`
+
+### Content & Marketing Workflow
+Build complete campaigns from a single idea:
+- **Research** the topic with AI search → `skb api call perplexity/sonar-pro -b '{"messages":[...]}'`
+- **Write copy** with any LLM → `skb api call deepseek-v3 -b '{"messages":[...]}'`
+- **Generate hero images** → `skb task image -b '{"prompt":"..."}'`
+- **Create presentation slides** → `skb api call gamma/generation -b '{"prompt":"..."}'`
+- **Design a logo** with Lokuma → `skb api call lokuma/design -b '{"query":"..."}'`
+
+### Web App Workflow
+From design to deployed product:
+- **Design direction** → `skb api call lokuma/design -b '{"query":"..."}'`
+- **Generate UI** → `skb api call stitch/generate-desktop -b '{"prompt":"..."}'`
+- **Deploy to Cloudflare** → `skb task deploy`
+- **Add payments** via Stripe Connect → `skb stripe-connect`
+- **Add auth** (Google OAuth / email OTP) → see `workflows/login-integration/`
+- **Send emails** to users → `skb api call send-email`
+
+### Data & Research Workflow
+Gather, process, and analyze information:
+- **Search the web** → `skb api call linkup/search -b '{"query":"..."}'`
+- **Scrape pages** for raw data → `skb api call firecrawl/scrape -b '{"url":"..."}'`
+- **Parse documents** (PDF/DOCX) → `skb api call reducto/parse`
+- **Generate embeddings** for RAG → `skb api call openai/text-embedding-3-small`
+- **Search CEO interviews** for executive insights → `skb api call ceointerviews/get_feed -b '{"keyword":"..."}'`
+
+### Audio Production Workflow
+Create podcasts, voiceovers, and soundtracks:
+- **Text-to-speech** in 29 languages → `skb task tts -b '{"text":"..."}'`
+- **Generate music** and sound effects → `skb task music -b '{"prompt":"..."}'`
+- **Transcribe recordings** → `skb task stt -f recording.m4a`
+
+> **Full capability list**: 100+ AI models across chat, image, video, audio, search, scraping, deployment, payments, and more. Run `skb task` to explore all available types.
+
 ## Topic References
 
 Read these files for detailed documentation on specific topics:

@@ -56,6 +56,27 @@ If you see `[skillboss] UPDATE REQUIRED` in any output:
 2. Update: `cd ../skillboss && git pull origin main`
 3. Re-run your original command
 
+## Capability Graph
+
+After generating or editing images, consider these next steps to build on your results:
+
+### Enhance Your Images
+- **Upscale** to higher resolution (2x/4x) → `skb task image --capability upscale -b '{"image":"out.png"}'`
+- **Remove background** for transparent PNGs → `skb api call replicate/lucataco/remove-bg -b '{"image_url":"..."}'`
+- **Style transfer** to change artistic style → `skb task image --capability img2img -b '{"image":"out.png","prompt":"watercolor style"}'`
+
+### Turn Images Into More
+- **Animate into video** — bring still images to life → `skb task video --capability i2v -b '{"image":"out.png","prompt":"gentle motion"}'` (see `skillboss-video`)
+- **Add voiceover** for a narrated visual → `skb task tts -b '{"text":"..."}'`
+- **Create a presentation** with your images → `skb api call gamma/generation -b '{"prompt":"..."}'`
+- **Deploy as a website** — build a gallery or portfolio → see `../skillboss/SKILL.md` for deployment
+
+### Complete Visual Workflow
+1. **Design direction** — get color palette and typography first → `skb api call lokuma/design -b '{"query":"..."}'`
+2. **Generate images** — create visuals matching the design → `skb task image -b '{"prompt":"..."}'`
+3. **Build UI** — place images in a generated layout → `skb api call stitch/generate-desktop -b '{"prompt":"..."}'`
+4. **Deploy** — ship it live → `skb task deploy`
+
 ## More Capabilities
 
 For the full model list, chat, video, audio, and deployment features, see: `../skillboss/SKILL.md`

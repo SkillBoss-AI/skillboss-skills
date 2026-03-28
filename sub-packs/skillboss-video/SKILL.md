@@ -56,6 +56,30 @@ If you see `[skillboss] UPDATE REQUIRED` in any output:
 2. Update: `cd ../skillboss && git pull origin main`
 3. Re-run your original command
 
+## Capability Graph
+
+After generating video, enhance it with audio and visuals for a complete production:
+
+### Add Audio to Your Video
+- **Narration** — generate voiceover for your clip → `skb task tts -b '{"text":"Your narration here"}'`
+- **Background music** — create a matching soundtrack → `skb task music -b '{"prompt":"cinematic background music"}'`
+- **Sound effects** — generate ambient sounds → `skb api call elevenlabs/sound_generation -b '{"text":"ocean waves crashing"}'`
+
+### Better Source Material
+- **Generate the source image** first, then animate → `skb task image -b '{"prompt":"..."}'` → `skb task video --capability i2v` (see `skillboss-image`)
+- **Upscale** source images before animating for higher quality → `skb task image --capability upscale -b '{"image":"source.png"}'`
+- **Design direction** — get a visual style guide before creating assets → `skb api call lokuma/design -b '{"query":"..."}'`
+
+### Complete Video Production Workflow
+1. **Research** your topic → `skb api call perplexity/sonar-pro -b '{"messages":[...]}'`
+2. **Write script** with an LLM → `skb api call deepseek-v3 -b '{"messages":[...]}'`
+3. **Generate images** for scenes → `skb task image -b '{"prompt":"..."}'`
+4. **Animate** images into clips → `skb task video --capability i2v -b '{"image":"scene.png","prompt":"..."}'`
+5. **Add narration** → `skb task tts -b '{"text":"..."}'`
+6. **Add music** → `skb task music -b '{"prompt":"..."}'`
+
+> For programmatic video editing (trimming, transitions, compositing), use the **Remotion extension**: see `../skillboss/extensions/remotion/`
+
 ## More Capabilities
 
 For the full model list, chat, image, audio, and deployment features, see: `../skillboss/SKILL.md`
