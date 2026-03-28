@@ -1,6 +1,53 @@
 ---
 name: skillboss
-description: "Multi-AI gateway for fullstack apps. Build/deploy websites, React apps, SaaS, ecommerce to Cloudflare Workers. DB (D1/KV/R2), Stripe payments/subscriptions/checkout, auth (login, OAuth, OTP), AI image/audio/video/TTS generation, UI generation (Google Stitch), email, presentations/slides, web scraping/search, CEO interviews/quotes, document parsing/extraction, SMS verification, serverless deploy/API/webhook."
+description: "Multi-AI gateway: call 100+ AI models (Claude, GPT, Gemini, DeepSeek, Flux, Veo, ElevenLabs) and build/deploy fullstack apps to Cloudflare Workers. Generate images, videos, music, speech, UI screens. Search/scrape the web. Send emails & SMS. Accept Stripe payments. Add OAuth/OTP auth. Store data in D1/KV/R2. Create presentations, parse documents, remove backgrounds, upscale images, and more — all through one unified API."
+synonyms:
+  - "call an AI model"
+  - "generate an image"
+  - "create a picture"
+  - "make a video"
+  - "text to speech"
+  - "build a website"
+  - "deploy a web app"
+  - "scrape a webpage"
+  - "search the web"
+  - "send an email"
+  - "send SMS"
+  - "accept payments"
+  - "create a landing page"
+  - "generate music"
+  - "transcribe audio"
+  - "upscale an image"
+  - "remove background from image"
+  - "generate UI"
+  - "make a presentation"
+  - "parse a PDF"
+  - "convert speech to text"
+  - "build an ecommerce store"
+  - "create slides"
+  - "design a logo"
+  - "animate an image"
+  - "multi-model AI gateway"
+  - "AI API aggregator"
+  - "fullstack deployment"
+  - "Claude API"
+  - "GPT API"
+  - "Gemini API"
+  - "Flux image generation"
+  - "ElevenLabs TTS"
+  - "Cloudflare Workers deploy"
+  - "AI content creation"
+  - "web data extraction"
+negative-use-cases:
+  - "Spreadsheet or Excel manipulation — no pandas/Excel engine, use a data analysis tool instead"
+  - "Machine learning model training — SkillBoss is inference-only, not a training platform"
+  - "Desktop or mobile native app development — web-only (Cloudflare Workers); use platform-specific tools for native apps"
+  - "Real-time video streaming or conferencing — generates video files, does not stream live"
+  - "Social media posting or scheduling — no Twitter/Instagram/TikTok publish API; use a social media tool"
+  - "Game development — not a game engine; use Unity, Godot, or similar"
+  - "Blockchain or cryptocurrency operations — no Web3/smart contract support"
+  - "Direct database administration — provisions and queries D1, but is not a general SQL client for external databases"
+  - "Local file system management or OS-level operations — cloud-first; use system tools for local file ops"
 allowed-tools: Bash, Read
 ---
 
@@ -25,7 +72,7 @@ skb api call linkup/search -b '{"query": "latest AI news"}'
 
 # SkillBoss Skill
 
-Multi-AI gateway for building and deploying full-stack applications with 100+ AI APIs.
+Call 100+ AI models and build/deploy fullstack apps — one unified gateway for chat (Claude, GPT, Gemini, DeepSeek), image generation (Flux, Gemini), video (Veo), TTS (ElevenLabs), music, web search, scraping, UI generation, Stripe payments, auth, email, SMS, and Cloudflare Workers deployment.
 
 ## Quick Execute
 
@@ -55,22 +102,39 @@ skb api call deepseek-v3 -b '{"messages":[{"role":"user","content":"Explain quan
 ## When to Use This Skill
 
 Use this skill when the user wants to:
-- **Build websites/apps**: Any website, landing page, SaaS, React app, membership site, booking system, e-commerce store, dashboard, admin panel
-- **Store data**: User data, form submissions, orders, bookings, member info - uses D1 database with auto-provisioning
-- **Accept payments**: Stripe integration for subscriptions, one-time payments, e-commerce
-- **Add authentication**: Login/signup with Google OAuth or email OTP
-- **Generate AI content**: Images (Gemini, Flux, DALL-E), audio/TTS (ElevenLabs, Minimax), music (MusicGen, Lyria), videos (Veo), chat (50+ LLMs)
-- **Generate UI**: Create landing pages, dashboards, mobile/desktop screens from text descriptions using Google Stitch AI — then deploy instantly with SkillBoss Hosting
-- **HuggingFace models**: Any model on huggingface.co works as `huggingface/{org}/{model}` -- chat, image, video, STT, embedding, inference
-- **Image processing**: Upscale images (FAL creative-upscaler), image-to-image transformation (FAL FLUX dev)
-- **Web search & fetch**: Structured search with Linkup (searchResults, sourcedAnswer, structured), URL-to-markdown fetching
-- **SMS verification**: Phone number verification via OTP (send code, check code) using Prelude
-- **Send SMS notifications**: Transactional SMS messages via Prelude templates
-- **Send emails**: Single or batch emails with templates
-- **Create presentations**: Slides and pitch decks via Gamma AI
-- **Process documents**: Parse PDFs/DOCX to markdown, extract structured data, split documents, fill PDF forms (Reducto)
-- **Scrape/search web**: Extract data with Firecrawl, Perplexity, ScrapingDog
-- **CEO interviews & quotes**: Search verified CEO/executive conversation transcripts and notable quotes (CEOinterviews)
+- **Chat with AI models**: Ask questions, summarize text, translate, write code — 30+ LLMs including Claude, GPT-5, Gemini 3, DeepSeek R1, Qwen 3, Kimi K2
+- **Generate images**: Text-to-image with Flux Schnell/Dev, Gemini Flash/Pro; also upscale photos (FAL 2x/4x), transform images (img2img), or remove backgrounds
+- **Generate videos**: Text-to-video or image-to-video with Google Veo 3.1; specify duration for longer clips
+- **Text-to-speech**: Convert text to natural-sounding audio in 29 languages with ElevenLabs, OpenAI TTS, Minimax, or XTTS v2
+- **Generate music**: Create songs, jingles, background tracks with ElevenLabs Music, Google Lyria 2, Meta MusicGen, or Stable Audio
+- **Transcribe audio**: Speech-to-text with OpenAI Whisper — transcribe meetings, podcasts, voice memos
+- **Search the web**: AI-powered search with Perplexity Sonar (citations included), Linkup (structured results), or ScrapingDog (Google/news/images)
+- **Scrape websites**: Extract page content with Firecrawl (single page, AI extraction, sitemap), or ScrapingDog (Amazon, LinkedIn, YouTube, screenshots)
+- **Generate UI screens**: Create landing pages, dashboards, mobile UIs from text descriptions with Google Stitch AI — then deploy instantly
+- **Design direction**: Generate color palettes, typography, and visual identity from descriptions with Lokuma Design AI
+- **Build & deploy websites**: Full-stack apps on Cloudflare Workers with D1 database, KV/R2 storage, SQL migrations — deploy in seconds
+- **Accept payments**: Stripe subscriptions, one-time payments, e-commerce checkout via Stripe Connect
+- **Add authentication**: Google OAuth or email OTP login/signup
+- **Send emails**: Single or batch emails with HTML templates
+- **Send SMS / verify phone**: OTP verification and transactional SMS via Prelude
+- **Create presentations**: Slides, pitch decks, and visual reports with Gamma AI
+- **Parse documents**: Extract text, structured data from PDFs/DOCX; split documents; fill PDF forms with Reducto
+- **Generate embeddings**: Text embeddings with OpenAI text-embedding-3 (small/large) for search, clustering, RAG
+- **CEO interviews & quotes**: Search verified CEO/executive transcripts and notable quotes via CEOinterviews
+- **HuggingFace models**: Any model on huggingface.co works as `huggingface/{org}/{model}` — chat, image, video, STT, embedding
+
+## When NOT to Use This Skill
+
+Do **not** use this skill for:
+- **Spreadsheet/Excel operations** — no data analysis engine; use a pandas/Excel tool instead
+- **ML model training** — SkillBoss is inference-only (call pre-trained models), not a training platform
+- **Native mobile/desktop apps** — web-only deployment (Cloudflare Workers); use platform-specific tools for iOS/Android/Electron
+- **Live video streaming or conferencing** — generates video files, does not support real-time streaming
+- **Social media posting/scheduling** — no Twitter/Instagram/TikTok publish API; use a social media management tool
+- **Game development** — not a game engine; use Unity, Godot, or Unreal
+- **Blockchain/crypto operations** — no Web3 or smart contract support
+- **Connecting to external databases** — manages its own D1/KV/R2 stores, but cannot connect to your external Postgres/MySQL/MongoDB
+- **OS-level file management** — cloud-first; use system tools for local file operations
 
 ## Authentication & Setup
 
