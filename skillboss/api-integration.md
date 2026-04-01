@@ -241,63 +241,6 @@ async function imageToVideo(prompt: string, imageUrl: string, duration?: number)
 }
 
 // ============================================================================
-// ASYNC VIDEO GENERATION (Seedance 2.0)
-// ============================================================================
-// Some models (e.g., seedance-2.0) return 202 Accepted with a job_id.
-// You must poll GET /v1/job/{job_id} until status is "completed".
-
-async function generateVideoAsync(prompt: string, options?: {
-  duration?: number, aspect_ratio?: string, image_urls?: string[]
-}): Promise<string> {
-  const model = 'seedance/seedance-2.0'
-
-  const response = await fetch(`${API_BASE}/run`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${API_KEY}`
-    },
-    body: JSON.stringify({
-      model,
-      inputs: {
-        prompt,
-        duration_seconds: options?.duration || 5,
-        aspect_ratio: options?.aspect_ratio || '16:9',
-        ...(options?.image_urls && { image_urls: options.image_urls })
-      }
-    })
-  })
-
-  // Server returns 202 with job_id for async models
-  if (response.status === 202) {
-    const job = await response.json()
-    // job = { status: "accepted", job_id: "job_...", poll_url: "/v1/job/job_..." }
-
-    // Poll until completed
-    while (true) {
-      await new Promise(r => setTimeout(r, 10000)) // wait 10s between polls
-
-      const pollResp = await fetch(`${API_BASE}/job/${job.job_id}`, {
-        headers: { 'Authorization': `Bearer ${API_KEY}` }
-      })
-      const pollData = await pollResp.json()
-
-      if (pollData.status === 'completed') {
-        return pollData.result.video_url
-      }
-      if (pollData.status === 'failed') {
-        throw new Error(`Video generation failed: ${pollData.error}`)
-      }
-      // status is "queued" or "running" — keep polling
-    }
-  }
-
-  // Sync response (non-async models)
-  const data = await response.json()
-  return data.video_url
-}
-
-// ============================================================================
 // DOCUMENT PROCESSING
 // ============================================================================
 async function parseDocument(url: string): Promise<object> {
