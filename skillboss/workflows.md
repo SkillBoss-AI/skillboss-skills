@@ -11,6 +11,7 @@ SkillBoss includes workflow guides for common tasks. Read the corresponding guid
 | Content Creation | `./workflows/content-creator/README.md` | Create videos, graphics content |
 | Login Integration | `./workflows/login-integration/README.md` | Add authentication to React apps |
 | E-Commerce | `./workflows/ecommerce/README.md` | Add Stripe payments to site |
+| Talking Head Video | `./workflows/talking-head-video/README.md` | Generate AI talking head videos from any topic |
 
 > $ **Monthly Cost:** Adding login integration costs 50 credits/month ($2.50/month) per project.
 

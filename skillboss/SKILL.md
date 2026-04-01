@@ -80,6 +80,7 @@ Use this skill when the user wants to:
 - **Process documents**: Parse PDFs/DOCX to markdown, extract structured data, split documents, fill PDF forms (Reducto)
 - **Scrape/search web**: Extract data with Firecrawl, Perplexity, ScrapingDog
 - **CEO interviews & quotes**: Search verified CEO/executive conversation transcripts and notable quotes (CEOinterviews)
+- **Talking head videos**: Generate AI talking head videos from any topic — research, script, video generation, narration (see `workflows/talking-head-video/`)
 
 ## Authentication & Setup
 
@@ -231,6 +232,7 @@ Combine generation with audio for complete clips:
 - **Add narration** with text-to-speech → `skb task tts -b '{"text":"..."}'`
 - **Add background music** → `skb task music -b '{"prompt":"upbeat background track"}'`
 - **Transcribe** existing audio for subtitles → `skb task stt -f audio.m4a`
+- **Talking head video** — full workflow: research → script → AI video → narration → see `workflows/talking-head-video/`
 
 ### Content & Marketing Workflow
 Build complete campaigns from a single idea:
@@ -276,5 +278,5 @@ Read these files for detailed documentation on specific topics:
 | API Integration | `api-integration.md` | Embedding SkillBoss API in user code (TypeScript/JS examples) |
 | Error Handling | `error-handling.md` | HTTP errors, retries, rate limits, balance warnings |
 | Billing | `billing.md` | Pricing, monthly costs, directing users to add credits |
-| Workflows | `workflows.md` | Logo, website, podcast, email, e-commerce workflow guides |
+| Workflows | `workflows.md` | Logo, website, podcast, email, e-commerce, talking head video workflow guides |
 | Model Reference | `reference.md` | Complete model list and detailed parameter docs |
