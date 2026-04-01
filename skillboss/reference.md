@@ -104,10 +104,7 @@ Complete model list and detailed parameter documentation.
 
 ### Video Generation
 
-- `seedance/seedance-2.0` - ByteDance Seedance 2.0, high-quality text+image-to-video (5/10/15s, async)
 - `vertex/veo-3.1-fast-generate-preview` - Google Veo 3.1
-- `mm/t2v` - Text-to-video, 5s 720p
-- `mm/i2v` - Image-to-video, 5s 720p
 
 ### Music Generation
 

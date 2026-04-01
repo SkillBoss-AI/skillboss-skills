@@ -191,15 +191,7 @@ async function generateMusic(prompt: string, duration?: number): Promise<string>
 // ============================================================================
 // VIDEO GENERATION
 // ============================================================================
-// CLI: video generation handles async models automatically
-// skb api call seedance/seedance-2.0 -b '{"prompt": "...", "duration_seconds": 5}' -o out.mp4
-// skb task video -b '{"prompt": "..."}' -o out.mp4
-//
-// For code integration: async models (e.g., seedance-2.0) return HTTP 202
-// with a job_id. Poll GET /v1/job/{job_id} until status is "completed".
-// See the generateVideoAsync() example below.
-
-// Sync text-to-video (fast models like mm/t2v)
+// Text-to-video
 async function generateVideo(prompt: string, duration?: number): Promise<string> {
   const model = 'mm/t2v' // Default for text-to-video
 
@@ -245,47 +237,6 @@ async function imageToVideo(prompt: string, imageUrl: string, duration?: number)
   const data = await response.json()
 
   // MM response format: {video_url: "https://..."}
-  return data.video_url
-}
-
-// Async video generation (models like seedance-2.0 that take minutes)
-// POST /v1/run returns 202 with job_id, poll GET /v1/job/{job_id} until done
-async function generateVideoAsync(prompt: string, options?: {
-  duration?: number, aspect_ratio?: string, image_urls?: string[]
-}): Promise<string> {
-  const response = await fetch(`${API_BASE}/run`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${API_KEY}`
-    },
-    body: JSON.stringify({
-      model: 'seedance/seedance-2.0',
-      inputs: {
-        prompt,
-        duration_seconds: options?.duration || 5,
-        aspect_ratio: options?.aspect_ratio || '16:9',
-        ...(options?.image_urls && { image_urls: options.image_urls })
-      }
-    })
-  })
-
-  if (response.status === 202) {
-    const { job_id } = await response.json()
-    // Poll until completed
-    while (true) {
-      await new Promise(r => setTimeout(r, 10000))
-      const poll = await fetch(`${API_BASE}/job/${job_id}`, {
-        headers: { 'Authorization': `Bearer ${API_KEY}` }
-      })
-      const data = await poll.json()
-      if (data.status === 'completed') return data.result.video_url
-      if (data.status === 'failed') throw new Error(data.error)
-    }
-  }
-
-  // Sync fallback
-  const data = await response.json()
   return data.video_url
 }
 
