@@ -104,7 +104,10 @@ Complete model list and detailed parameter documentation.
 
 ### Video Generation
 
+- `seedance/seedance-2.0` - ByteDance Seedance 2.0, 5/10/15s, text+image-to-video (**async**: returns job_id, poll `/v1/job/{job_id}`)
 - `vertex/veo-3.1-fast-generate-preview` - Google Veo 3.1
+- `mm/t2v` - Text-to-video, 5s 720p
+- `mm/i2v` - Image-to-video, 5s 720p
 
 ### Music Generation
 
