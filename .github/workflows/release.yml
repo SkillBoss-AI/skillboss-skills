@@ -19,29 +19,15 @@ jobs:
         with:
           fetch-depth: 10 # For changelog generation
 
-      - name: Get version from config
+      - name: Generate version
         id: version
         run: |
-          VERSION=$(jq -r .version skillboss/config.json)
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          VERSION="$(date +%Y.%m.%d)-${SHORT_SHA}"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "📦 Version: $VERSION"
-
-      - name: Check if version already exists in R2
-        id: check_exists
-        run: |
-          if npx wrangler r2 object get "skillboss/versions/${{ steps.version.outputs.version }}.zip" --file=/tmp/r2_check --remote 2>/dev/null; then
-            rm -f /tmp/r2_check
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Fail if version exists
-        if: steps.check_exists.outputs.exists == 'true'
-        run: |
-          echo "❌ Version ${{ steps.version.outputs.version }} already exists in R2!"
-          echo "   Please bump the version in skillboss/config.json before pushing."
-          exit 1
+          # Write generated version back into config.json before packaging
+          jq --arg v "$VERSION" '.version = $v' skillboss/config.json > /tmp/config.tmp && mv /tmp/config.tmp skillboss/config.json
 
       - name: Generate changelog from commits
         id: changelog
