@@ -32,53 +32,57 @@ import OpenAI from "openai";
 // Configuration
 const API_KEY = process.env.SKILLBOSS_API_KEY || process.env.OPENAI_API_KEY || "";
 const BASE_URL = process.env.SKILLBOSS_BASE_URL || "https://api.skillboss.co/v1";
+const MCP_VERSION = "1.0.1";
 
 // OpenAI client configured for SkillBoss
 const client = new OpenAI({
   apiKey: API_KEY,
   baseURL: BASE_URL,
+  defaultHeaders: {
+    "x-skillboss-version": MCP_VERSION,
+    "x-skillboss-source": "mcp-server",
+    "x-client-name": "@skillboss/mcp-server",
+  },
 });
 
-// Available models with descriptions
-const MODELS = {
-  // Claude models
-  "bedrock/claude-4-5-sonnet": "Best for complex reasoning, coding, and analysis",
-  "bedrock/claude-3-7-sonnet": "Balanced performance for most tasks",
-  "bedrock/claude-3-5-haiku": "Fast and cost-effective for simple tasks",
-
-  // OpenAI models
-  "gpt-5": "Latest OpenAI model with advanced capabilities",
-  "gpt-4-turbo": "Fast GPT-4 with 128K context",
-  "gpt-4o": "Multimodal GPT-4 optimized for efficiency",
-  "gpt-4o-mini": "Fastest and cheapest GPT-4 variant",
-
-  // Google models
+// Chat-capable models exposed by the MCP chat tool.
+const CHAT_MODELS = {
+  "openai/gpt-5": "Default general-purpose model for reasoning and coding",
+  "claude-4-6-sonnet": "High-quality coding and analysis fallback",
   "gemini-2.5-flash": "Extremely fast with 1M context window",
-  "gemini-2.0-pro": "Best Gemini for complex reasoning",
+} as const;
 
-  // Other models
-  "deepseek/deepseek-v3": "Cost-effective for coding tasks",
-  "qwen/qwen-max": "Alibaba's best multilingual model",
+// Capability defaults surfaced in descriptions and docs, but not routed through chat.completions.
+const CAPABILITY_DEFAULTS = {
+  "perplexity/sonar-pro": "Default web search model with citations",
+  "vertex/gemini-3-pro-image-preview": "Default image generation model",
+  "seedance/seedance-2.0": "Highest-quality video generation",
+  "minimax/speech-01-turbo": "Default multilingual text-to-speech",
+  "openai/whisper-1": "Default speech-to-text model",
+  "firecrawl/scrape": "Default page scraping model",
 } as const;
 
 // Define MCP tools
 const tools: Tool[] = [
   {
     name: "chat",
-    description: `Send a message to any AI model and get a response. Supports 50+ models including Claude 4.5 Sonnet, GPT-5, Gemini 2.5 Flash, and more. Uses SkillBoss unified API.
+    description: `Send a message to any AI model and get a response. Uses SkillBoss unified API with current recommended defaults for chat, search, image, video, speech, and scraping.
 
-Available models:
-${Object.entries(MODELS).map(([id, desc]) => `- ${id}: ${desc}`).join("\n")}
+Available chat models:
+${Object.entries(CHAT_MODELS).map(([id, desc]) => `- ${id}: ${desc}`).join("\n")}
 
-Example: chat with Claude 4.5 Sonnet about coding`,
+Other default SkillBoss APIs:
+${Object.entries(CAPABILITY_DEFAULTS).map(([id, desc]) => `- ${id}: ${desc}`).join("\n")}
+
+Example: chat with GPT-5 about coding`,
     inputSchema: {
       type: "object",
       properties: {
         model: {
           type: "string",
-          description: "Model ID to use (e.g., 'bedrock/claude-4-5-sonnet', 'gpt-5', 'gemini-2.5-flash')",
-          enum: Object.keys(MODELS),
-          default: "bedrock/claude-4-5-sonnet",
+          description: "Model ID to use (e.g., 'openai/gpt-5', 'claude-4-6-sonnet', 'gemini-2.5-flash')",
+          enum: Object.keys(CHAT_MODELS),
+          default: "openai/gpt-5",
         },
         message: {
           type: "string",
@@ -207,7 +211,7 @@ async function handleChat(args: {
   messages.push({ role: "user", content: args.message });
 
   const response = await client.chat.completions.create({
-    model: args.model || "bedrock/claude-4-5-sonnet",
+    model: args.model || "openai/gpt-5",
     messages,
     max_tokens: args.max_tokens || 4096,
     temperature: args.temperature || 0.7,
@@ -241,11 +245,14 @@ async function handleListModels(): Promise<string> {
   } catch (error) {
     // Fallback to static list
     return JSON.stringify({
-      models: Object.entries(MODELS).map(([id, description]) => ({
+      models: [
+        ...Object.entries(CHAT_MODELS),
+        ...Object.entries(CAPABILITY_DEFAULTS),
+      ].map(([id, description]) => ({
         id,
         description,
       })),
-      total: Object.keys(MODELS).length,
+      total: Object.keys(CHAT_MODELS).length + Object.keys(CAPABILITY_DEFAULTS).length,
       documentation: "https://skillboss.co/docs/models/overview",
     });
   }

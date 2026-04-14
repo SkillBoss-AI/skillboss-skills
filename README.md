@@ -63,10 +63,10 @@ skb login -k sk-your-api-key
 # Browse APIs
 skb api types
 skb api list --type chat
-skb api show deepseek-v3
+skb api show openai/gpt-5
 
 # Call any model
-skb api call deepseek-v3 -b '{"messages":[{"role":"user","content":"Hello"}]}'
+skb api call openai/gpt-5 -b '{"messages":[{"role":"user","content":"Hello"}]}'
 skb api call flux-1.1-pro -b '{"prompt":"A sunset"}' -o sunset.png
 
 # Smart task navigator

@@ -14,7 +14,7 @@ When building apps that need AI capabilities (image generation, TTS, chat, etc.)
 
 ## API Format
 
-**Base URL:** `https://api.heybossai.com/v1`
+**Base URL:** `https://api.skillboss.co/v1`
 **Auth:** `Authorization: Bearer <your-api-key>`
 **API Key:** Read from `~/.config/skillboss/credentials.json` -> `api_key` field, or `skillboss/config.json` -> `apiKey` field
 
@@ -23,7 +23,7 @@ When building apps that need AI capabilities (image generation, TTS, chat, etc.)
 ```typescript
 // Read API key from credentials file or config.json
 const API_KEY = '<your-api-key>' // from ~/.config/skillboss/credentials.json or config.json
-const API_BASE = 'https://api.heybossai.com/v1'
+const API_BASE = 'https://api.skillboss.co/v1'
 
 // ============================================================================
 // PILOT -- Smart Model Navigator (recommended starting point)
@@ -46,6 +46,9 @@ const types = await pilot({ discover: true })
 // Get ranked recommendations with docs
 const reco = await pilot({ type: 'image', prefer: 'price', limit: 3 })
 
+// Search defaults
+const searchReco = await pilot({ type: 'search', prefer: 'quality', limit: 3 })
+
 // One-shot execute (auto-select best model)
 const result = await pilot({ type: 'image', inputs: { prompt: 'A cat' } })
 
@@ -63,7 +66,7 @@ async function chat(prompt: string): Promise<string> {
       'Authorization': `Bearer ${API_KEY}`
     },
     body: JSON.stringify({
-      model: 'bedrock/claude-4-5-sonnet', // or bedrock/claude-4-6-opus, openai/gpt-5, vertex/gemini-2.5-flash
+      model: 'openai/gpt-5', // or claude-4-6-sonnet, vertex/gemini-2.5-flash
       inputs: {
         messages: [{ role: 'user', content: prompt }]
       }
@@ -79,10 +82,30 @@ async function chat(prompt: string): Promise<string> {
 }
 
 // ============================================================================
+// SEARCH
+// ============================================================================
+async function webSearch(query: string): Promise<any> {
+  const response = await fetch(`${API_BASE}/run`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${API_KEY}`
+    },
+    body: JSON.stringify({
+      model: 'perplexity/sonar-pro',
+      inputs: {
+        messages: [{ role: 'user', content: query }]
+      }
+    })
+  })
+  return response.json()
+}
+
+// ============================================================================
 // IMAGE GENERATION
 // ============================================================================
 async function generateImage(prompt: string, size?: string): Promise<string> {
-  const model = 'mm/img' // Default model, or use vertex/gemini-3-pro-image-preview
+  const model = 'vertex/gemini-3-pro-image-preview'
 
   const response = await fetch(`${API_BASE}/run`, {
     method: 'POST',
@@ -93,15 +116,13 @@ async function generateImage(prompt: string, size?: string): Promise<string> {
     body: JSON.stringify({
       model,
       inputs: {
-        prompt,
-        size: size || '1024*768'  // MM format: "width*height", default 4:3 landscape
+        prompt
       }
     })
   })
   const data = await response.json()
 
-  // MM response format: {image_url: "https://..."}
-  return data.image_url
+  return data.generated_images?.[0] || data.image_url
 }
 
 // ============================================================================
@@ -193,7 +214,7 @@ async function generateMusic(prompt: string, duration?: number): Promise<string>
 // ============================================================================
 // Text-to-video
 async function generateVideo(prompt: string, duration?: number): Promise<string> {
-  const model = 'mm/t2v' // Default for text-to-video
+  const model = 'vertex/veo-3.1-fast-generate-preview'
 
   const response = await fetch(`${API_BASE}/run`, {
     method: 'POST',
@@ -205,14 +226,13 @@ async function generateVideo(prompt: string, duration?: number): Promise<string>
       model,
       inputs: {
         prompt,
-        duration: duration || 5  // seconds
+        duration_seconds: duration || 5
       }
     })
   })
   const data = await response.json()
 
-  // MM response format: {video_url: "https://..."}
-  return data.video_url
+  return data.generatedSamples?.[0]?.video?.uri || data.videos?.[0] || data.video_url
 }
 
 // Image-to-video
@@ -345,13 +365,13 @@ async function extractFromDocument(url: string, schema: object): Promise<object>
 | Type | Model Examples | Response Location |
 |------|----------------|-------------------|
 | Chat | bedrock/claude-*, openai/gpt-* | `choices[0].message.content` or `content[0].text` |
-| Image | mm/img | `image_url` |
-| Image | vertex/gemini-3-pro-image-preview | `generated_images[0]` |
+| Image | vertex/gemini-3-pro-image-preview | `generated_images[0]` or `image_url` |
 | Image | replicate/flux-* | `data[0]` (array of URLs) |
 | TTS | minimax/speech-01-turbo, elevenlabs/* | Binary audio (use `response.arrayBuffer()`) |
 | STT | openai/whisper-1 | `text` |
 | Music | replicate/elevenlabs/music, replicate/meta/musicgen | `audio_url` |
-| Video | mm/t2v, mm/i2v | `video_url` |
+| Video | vertex/veo-3.1-fast-generate-preview | `generatedSamples[0].video.uri` or `videos[0]` |
+| Video | mm/i2v | `video_url` |
 | Video | vertex/veo-* | `generatedSamples[0].video.uri` or `videos[0]` |
 | Document | reducto/parse | `result` (parsed markdown), `usage.credits` |
 | Document | reducto/extract | `result` (extracted fields), `usage.credits` |
