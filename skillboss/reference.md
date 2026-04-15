@@ -104,12 +104,12 @@ Complete model list and detailed parameter documentation.
 
 ### Video Generation
 
-- `seedance/seedance-2.0` - ByteDance Seedance 2.0, high-quality text+image-to-video, 5/10/15s ($0.36/s, async — CLI auto-polls)
+- `seedance/seedance-2.0` - ByteDance Seedance 2.0, high-quality text+image-to-video, 5/10/15s (~$0.58/s, slower because SkillBoss waits for completion)
 - `vertex/veo-3.1-fast-generate-preview` - Google Veo 3.1
 - `mm/t2v` - Text-to-video, 5s 720p
 - `mm/i2v` - Image-to-video, 5s 720p
 
-**Async models:** Some video models return HTTP 202. The CLI (`skb api call`) handles polling automatically. If calling the API directly, poll `GET /v1/job/{job_id}` until `status` is `"completed"`.
+**Long-running models:** Some video models take much longer than chat or search requests. The CLI (`skb api call`) waits for completion automatically, so direct `/v1/run` calls can take noticeably longer before they return.
 
 ### Music Generation
 

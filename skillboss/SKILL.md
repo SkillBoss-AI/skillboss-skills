@@ -44,7 +44,7 @@ skb task image -b '{"prompt": "A sunset over mountains"}' -o out.png
 # Video generation
 skb task video -b '{"prompt": "A cat playing in snow"}' -o out.mp4
 
-# Video with Seedance 2.0 (high quality, CLI auto-polls async models)
+# Video with Seedance 2.0 (high quality, slower; CLI waits until completion)
 skb api call seedance/seedance-2.0 -b '{"prompt": "A puppy in a park", "duration_seconds": 5}' -o out.mp4
 
 # Text-to-Speech
