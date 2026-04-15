@@ -671,9 +671,9 @@ node ./scripts/api-hub.js run [options]
 {
   "apiKey": "your-api-hub-key",
   "sender": "auto-determined",
-  "baseUrl": "https://api.heybossai.com/v1",
-  "buildApiUrl": "https://build.skillbossai.com",
-  "stripeConnectUrl": "https://heyboss.ai"
+  "baseUrl": "https://api.skillboss.co/v1",
+  "buildApiUrl": "https://heyboss-serve-build-579483274893.us-central1.run.app",
+  "stripeConnectUrl": "https://www.skillboss.co"
 }
 ```
 

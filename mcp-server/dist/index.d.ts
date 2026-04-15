@@ -14,7 +14,7 @@
  *
  * Environment Variables:
  *   SKILLBOSS_API_KEY - Your SkillBoss API key (get one at https://skillboss.co/console)
- *   SKILLBOSS_BASE_URL - API base URL (default: https://api.heybossai.com/v1)
+ *   SKILLBOSS_BASE_URL - API base URL (default: https://api.skillboss.co/v1)
  *
  * @see https://skillboss.co/docs/integrations/mcp-server
  */

@@ -14,7 +14,7 @@
  *
  * Environment Variables:
  *   SKILLBOSS_API_KEY - Your SkillBoss API key (get one at https://skillboss.co/console)
- *   SKILLBOSS_BASE_URL - API base URL (default: https://api.heybossai.com/v1)
+ *   SKILLBOSS_BASE_URL - API base URL (default: https://api.skillboss.co/v1)
  *
  * @see https://skillboss.co/docs/integrations/mcp-server
  */
@@ -24,7 +24,7 @@ import { CallToolRequestSchema, ListToolsRequestSchema, } from "@modelcontextpro
 import OpenAI from "openai";
 // Configuration
 const API_KEY = process.env.SKILLBOSS_API_KEY || process.env.OPENAI_API_KEY || "";
-const BASE_URL = process.env.SKILLBOSS_BASE_URL || "https://api.heybossai.com/v1";
+const BASE_URL = process.env.SKILLBOSS_BASE_URL || "https://api.skillboss.co/v1";
 // OpenAI client configured for SkillBoss
 const client = new OpenAI({
     apiKey: API_KEY,

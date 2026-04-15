@@ -240,16 +240,9 @@ Outdoor: "golden hour sunlight, urban rooftop, cinematic depth of field"
    - Fallback 1: `seedance/seedance-2.0` (async, higher quality)
    - Fallback 2: `mm/t2v` (fast, lower quality)
 
-### Video Generation (Async — HTTP 202)
+### Video Generation (Long-running request)
 
-Some models (e.g., `seedance/seedance-2.0`) return HTTP 202 with a `job_id`. The `skb` CLI handles polling automatically. If calling the API directly:
-
-```bash
-# Poll for completion
-curl -s -H "Authorization: Bearer $API_KEY" \
-  https://api.heybossai.com/v1/job/{job_id}
-# Wait until status is "completed", then download the video_url
-```
+Some high-quality video models (for example `seedance/seedance-2.0`) may take noticeably longer to finish. The `skb` CLI waits for completion automatically. If you call the API directly, allow the request to run longer instead of assuming a separate public polling endpoint exists.
 
 ### TTS (Rate Limit 429)
 
@@ -276,7 +269,7 @@ Tell user: "Your SkillBoss credits have run out. Visit https://www.skillboss.co/
 | Search | `perplexity/sonar-pro` | 1-5 credits (~$0.05-$0.25) |
 | Script (if using LLM) | `openai/gpt-5` | 2-10 credits (~$0.10-$0.50) |
 | Video (per scene) | `vertex/veo-3.1-fast-generate-preview` | 50-100 credits (~$2.50-$5.00) |
-| Video (per scene) | `seedance/seedance-2.0` | ~$0.36/s (e.g., 10s = ~72 credits) |
+| Video (per scene) | `seedance/seedance-2.0` | ~$0.58/s (e.g., 10s = ~116 credits) |
 | Video (per scene) | `mm/t2v` | 20-50 credits (~$1.00-$2.50) |
 | TTS narration | `elevenlabs/eleven_multilingual_v2` | 5-10 credits (~$0.25-$0.50) |
 | **Total (3-scene video)** | | **~$8-$20** |
@@ -310,7 +303,7 @@ A: Use image-to-video (`mm/i2v`): upload a photo and prompt it to animate with s
 | Person looks different across scenes | Use identical character description in every prompt; consider image-to-video approach |
 | No audio in generated video | Most AI video models generate silent video; add TTS narration as a separate step |
 | Video quality too low | Switch to `seedance/seedance-2.0` (highest quality) or add `"high quality, 4K, cinematic"` to prompt |
-| Async model never completes | Check job status via `GET /v1/job/{job_id}`; some complex prompts may take 2-5 minutes |
+| Video generation takes longer than expected | Allow 2-5 minutes for long-running models such as `seedance/seedance-2.0`; prefer the `skb` CLI so waiting is handled automatically |
 
 ## Models Reference
 
