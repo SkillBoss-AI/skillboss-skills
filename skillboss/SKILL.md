@@ -149,7 +149,7 @@ skb task image --prefer price --limit 3
 
 ### View model details + params:
 ```bash
-skb api show flux-1.1-pro
+skb api show replicate/black-forest-labs/flux-1.1-pro
 skb api show openai/gpt-5
 ```
 

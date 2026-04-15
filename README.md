@@ -67,7 +67,7 @@ skb api show openai/gpt-5
 
 # Call any model
 skb api call openai/gpt-5 -b '{"messages":[{"role":"user","content":"Hello"}]}'
-skb api call flux-1.1-pro -b '{"prompt":"A sunset"}' -o sunset.png
+skb api call replicate/black-forest-labs/flux-1.1-pro -b '{"prompt":"A sunset"}' -o sunset.png
 
 # Smart task navigator
 skb task image -b '{"prompt":"A sunset"}' -o sunset.png

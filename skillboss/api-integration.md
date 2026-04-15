@@ -366,7 +366,7 @@ async function extractFromDocument(url: string, schema: object): Promise<object>
 |------|----------------|-------------------|
 | Chat | bedrock/claude-*, openai/gpt-* | `choices[0].message.content` or `content[0].text` |
 | Image | vertex/gemini-3-pro-image-preview | `generated_images[0]` or `image_url` |
-| Image | replicate/flux-* | `data[0]` (array of URLs) |
+| Image | replicate/flux-* | `image_url` or `images[0].url` |
 | TTS | minimax/speech-01-turbo, elevenlabs/* | Binary audio (use `response.arrayBuffer()`) |
 | STT | openai/whisper-1 | `text` |
 | Music | replicate/elevenlabs/music, replicate/meta/musicgen | `audio_url` |

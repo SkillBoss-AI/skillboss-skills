@@ -89,13 +89,19 @@ Complete model list and detailed parameter documentation.
 
 - `vertex/gemini-2.5-flash-image-preview` - Gemini 2.5 Flash Image (preferred)
 - `vertex/gemini-3-pro-image-preview` - Gemini 3 Pro Image
+- `openai/dall-e-3` - OpenAI DALL-E 3
 
 **Replicate:**
 
+- `replicate/black-forest-labs/flux-1.1-pro` - High quality
 - `replicate/black-forest-labs/flux-schnell` - Fast generation
 - `replicate/black-forest-labs/flux-dev` - High quality
 - `replicate/lucataco/remove-bg` - Background removal
 - `replicate/851-labs/background-remover` - Background removal v2
+
+**MiniMax:**
+
+- `mm/img` - Fast image generation
 
 ### Image Upscale & Transformation (FAL)
 
