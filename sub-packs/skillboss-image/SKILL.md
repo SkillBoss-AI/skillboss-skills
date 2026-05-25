@@ -68,7 +68,7 @@ After generating or editing images, consider these next steps to build on your r
 
 ### Enhance Your Images
 - **Upscale** to higher resolution (2x/4x) → `skb task image --capability upscale -b '{"image":"out.png"}'`
-- **Remove background** for transparent PNGs → `skb api call replicate/lucataco/remove-bg -b '{"image_url":"..."}'`
+- **Remove background** for transparent PNGs → `skb api call fal/remove-bg -b '{"image_url":"..."}'` (use SkillBoss Image auto-select for best results)
 - **Style transfer** to change artistic style → `skb task image --capability img2img -b '{"image":"out.png","prompt":"watercolor style"}'`
 
 ### Turn Images Into More

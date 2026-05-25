@@ -54,7 +54,7 @@ Adjust the prompt based on user feedback and regenerate.
 If `gemini-2.5-flash-image-preview` hits rate limit:
 1. Wait 30 seconds and retry
 2. Switch to fallback: `vertex/gemini-3-pro-image-preview`
-3. Last resort: `replicate/black-forest-labs/flux-schnell`
+3. Last resort: `fal/flux-schnell` (via SkillBoss Image)
 
 ```bash
 # Fallback example
@@ -73,7 +73,7 @@ Tell user: "Your SkillBoss credits have run out. Visit https://www.skillboss.co/
 |-------|----------|-------|
 | `vertex/gemini-2.5-flash-image-preview` | Primary choice, fast | Fast |
 | `vertex/gemini-3-pro-image-preview` | Higher quality | Medium |
-| `replicate/black-forest-labs/flux-schnell` | Fallback option | Fast |
+| `fal/flux-schnell` (via SkillBoss Image) | Fallback option | Fast |
 
 ## Prompt Tips
 

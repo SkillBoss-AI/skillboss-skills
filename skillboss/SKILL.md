@@ -149,7 +149,7 @@ skb task image --prefer price --limit 3
 
 ### View model details + params:
 ```bash
-skb api show replicate/black-forest-labs/flux-1.1-pro
+skb api show fal/flux-dev
 skb api show openai/gpt-5
 ```
 
@@ -232,7 +232,7 @@ SkillBoss capabilities work best in combination. After completing a task, consid
 ### Image Creation Workflow
 After generating an image, enhance it for production use:
 - **Upscale** low-res output to print quality → `skb task image --capability upscale -b '{"image":"out.png"}'`
-- **Remove background** for transparent PNGs → `skb api call replicate/lucataco/remove-bg -b '{"image_url":"..."}'`
+- **Remove background** for transparent PNGs → use SkillBoss Image auto-select (best quality path) `skb task image --capability remove-bg -b '{"image_url":"..."}'`
 - **Style transfer** to match a brand aesthetic → `skb task image --capability img2img -b '{"image":"out.png","prompt":"..."}'`
 - **Animate** the image into a short video → `skb task video --capability i2v -b '{"image":"out.png","prompt":"bring to life"}'`
 

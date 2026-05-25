@@ -99,7 +99,7 @@ When working through SkillBoss, prefer these APIs:
 - **Website and competitor scrape**: `firecrawl/scrape`
 - **Contact enrichment**: `hunter/domain-search`, `hunter/email-finder`, `hunter/email-verifier`
 - **Cold email execution**: `aws/send-email` or `skillboss-cold-email`
-- **Asset generation**: `replicate/black-forest-labs/flux-1.1-pro`, `vertex/gemini-3-pro-image-preview`
+- **Asset generation**: `fal/flux-dev`, `vertex/gemini-3-pro-image-preview` (use SkillBoss Image auto-select)
 - **Narrative drafting**: `openai/gpt-5`, `claude-4-6-sonnet`
 
 ## Twitter / X Strategy

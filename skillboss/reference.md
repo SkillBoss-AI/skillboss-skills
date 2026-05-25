@@ -144,9 +144,13 @@ Complete model list and detailed parameter documentation.
 - `pixverse/pixverse-v5` - PixVerse V5, creative video generation
 
 **Replicate (legacy — prefer direct vendors above):**
-- `replicate/black-forest-labs/flux-fill-pro` - Image inpainting
-- `replicate/wan-video/wan-2.6-t2v` - Wan 2.6 text-to-video
-- `replicate/wan-video/wan-2.6-i2v` - Wan 2.6 image-to-video
+### Video Generation
+> ⚠️ **Archived (2026-05)**: Replicate models below are kept for reference only.
+> Use SkillBoss Video auto-select (`skb task video`) for current paths.
+
+- `fal/kling-v1-6` - Kling video generation — **current**
+- ~~`replicate/wan-video/wan-2.6-t2v`~~ - Deprecated
+- ~~`replicate/wan-video/wan-2.6-i2v`~~ - Deprecated
 
 **Long-running models:** Some video models take much longer than chat or search requests. The CLI (`skb api call`) waits for completion automatically, so direct `/v1/run` calls can take noticeably longer before they return.
 

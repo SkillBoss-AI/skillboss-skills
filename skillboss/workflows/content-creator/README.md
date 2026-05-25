@@ -66,7 +66,7 @@ node ./scripts/api-hub.js video \
 ### Image Generation (Rate Limit 429)
 1. Wait 30 seconds and retry
 2. Switch to: `vertex/gemini-3-pro-image-preview`
-3. Last resort: `replicate/black-forest-labs/flux-schnell`
+3. Last resort: `fal/flux-schnell` (via SkillBoss Image)
 
 ### TTS (Rate Limit 429)
 1. Wait 30 seconds and retry
@@ -124,7 +124,7 @@ Tell user: "Your SkillBoss credits have run out. Visit https://www.skillboss.co/
 |------|-------|----------|
 | Image | `vertex/gemini-2.5-flash-image-preview` | Primary choice, fast |
 | Image | `vertex/gemini-3-pro-image-preview` | High quality |
-| Image | `replicate/black-forest-labs/flux-schnell` | Fallback option |
+| Image | `fal/flux-schnell` (via SkillBoss Image) | Fallback option |
 | TTS | `elevenlabs/eleven_multilingual_v2` | Professional voiceover |
 | TTS | `minimax/speech-01-turbo` | Chinese content |
 | Video | `vertex/veo-3.1-fast-generate-preview` | Short promotional videos |
