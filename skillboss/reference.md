@@ -66,47 +66,64 @@ Complete model list and detailed parameter documentation.
 ### Text-to-Speech
 
 **ElevenLabs:**
-
 - `elevenlabs/eleven_multilingual_v2` - 29 languages, highest quality
+- `elevenlabs/turbo-v2.5` - Turbo v2.5, fast and high quality
 - `elevenlabs/sound_generation` - Sound effects generation
 
 **Minimax:**
-
 - `minimax/speech-01-turbo` - Chinese TTS optimized
+- `minimax/speech-02-turbo` - Next-gen TTS, natural voice
+- `minimax/speech-2.8-hd` - HD quality, premium voice
+
+**Bailian (DashScope):**
+- `bailian/qwen3-tts` - Qwen3 TTS, Chinese optimized
 
 **OpenAI:**
-
 - `openai/tts-1` - Standard quality
 - `openai/tts-1-hd` - HD quality
 
-**Replicate:**
-
-- `replicate/lucataco/xtts-v2` - XTTS v2
+**Fish Audio:**
+- `fish_audio/s1` - S1 voice model
+- `fish_audio/s2-pro` - S2 Pro voice model
 
 ### Image Generation
 
 **Vertex (Recommended):**
-
 - `vertex/gemini-2.5-flash-image-preview` - Gemini 2.5 Flash Image (preferred)
 - `vertex/gemini-3-pro-image-preview` - Gemini 3 Pro Image
+- `vertex/imagen-4-fast` - Imagen 4 Fast
+- `vertex/imagen-4` - Imagen 4
+- `vertex/imagen-4-ultra` - Imagen 4 Ultra
 - `openai/dall-e-3` - OpenAI DALL-E 3
 
 **Replicate:**
-
 - `replicate/black-forest-labs/flux-1.1-pro` - High quality
+- `replicate/black-forest-labs/flux-1.1-pro-ultra` - Ultra quality
 - `replicate/black-forest-labs/flux-schnell` - Fast generation
-- `replicate/black-forest-labs/flux-dev` - High quality
+- `replicate/black-forest-labs/flux-2-pro` - Flux 2 Pro
+- `replicate/black-forest-labs/flux-2-max` - Flux 2 Max
+- `replicate/bytedance/seedream-4.5` - ByteDance Seedream 4.5
 - `replicate/lucataco/remove-bg` - Background removal
 - `replicate/851-labs/background-remover` - Background removal v2
 
-**MiniMax:**
+**FAL.ai:**
+- `fal/flux-dev` - Flux Dev (high quality, faster than Replicate)
+- `fal/sd3.5-large` - Stable Diffusion 3.5 Large (cheapest, good quality)
+- `fal/upscale` - Creative upscaler (2x or 4x)
+- `fal/img2img` - Image-to-image transformation (FLUX dev)
 
+**Together AI:**
+- `together/flux-dev` - Flux Dev via Together AI (fastest)
+
+**MiniMax:**
 - `mm/img` - Fast image generation
 
 ### Image Upscale & Transformation (FAL)
 
 - `fal/upscale` - Creative upscaler (2x or 4x)
 - `fal/img2img` - Image-to-image transformation (FLUX dev)
+- `fal/real-esrgan` - Real-ESRGAN upscaling (high quality)
+- `fal/clarity-upscaler` - Clarity AI upscaling (AI-enhanced)
 
 ### Video Generation
 
@@ -114,6 +131,22 @@ Complete model list and detailed parameter documentation.
 - `vertex/veo-3.1-fast-generate-preview` - Google Veo 3.1
 - `mm/t2v` - Text-to-video, 5s 720p
 - `mm/i2v` - Image-to-video, 5s 720p
+
+**FAL.ai Video:**
+- `fal/kling-v3` - Kling V3, high-quality video generation
+- `fal/kling-v2.5-turbo-pro` - Kling V2.5 Turbo Pro, fast + pro quality
+- `fal/hailuo-2.3` - HaiLuo 2.3, cinematic quality
+
+**Runway:**
+- `runway/gen-4.5` - Runway Gen-4.5, professional video generation
+
+**PixVerse:**
+- `pixverse/pixverse-v5` - PixVerse V5, creative video generation
+
+**Replicate (legacy — prefer direct vendors above):**
+- `replicate/black-forest-labs/flux-fill-pro` - Image inpainting
+- `replicate/wan-video/wan-2.6-t2v` - Wan 2.6 text-to-video
+- `replicate/wan-video/wan-2.6-i2v` - Wan 2.6 image-to-video
 
 **Long-running models:** Some video models take much longer than chat or search requests. The CLI (`skb api call`) waits for completion automatically, so direct `/v1/run` calls can take noticeably longer before they return.
 
@@ -123,6 +156,7 @@ Complete model list and detailed parameter documentation.
 - `replicate/google/lyria-2` - Google Lyria 2, DeepMind's advanced music AI
 - `replicate/meta/musicgen` - Meta MusicGen, open-source, diverse styles (recommended)
 - `replicate/stability-ai/stable-audio-2.5` - Stable Audio 2.5, up to 3 minutes
+- `minimax/music-2.5` - MiniMax Music 2.5, Chinese + English lyrics
 
 ### Web Search
 
@@ -176,7 +210,20 @@ Complete model list and detailed parameter documentation.
 
 ### Speech-to-Text
 
+**OpenAI:**
 - `openai/whisper-1` - Audio to text
+
+**Groq (fastest, free tier):**
+- `groq/whisper-large-v3-turbo` - Ultra-fast Whisper via Groq
+
+**Deepgram (highest accuracy):**
+- `deepgram/nova-2` - Nova-2, best accuracy with smart formatting
+
+**MiniMax:**
+- `minimax/speech-01` - MiniMax STT
+
+**Replicate (legacy):**
+- `replicate/openai/whisper` - OpenAI Whisper via Replicate (use openai/whisper-1 instead)
 
 ---
 
