@@ -88,20 +88,16 @@ Complete model list and detailed parameter documentation.
 
 ### Image Generation
 
-**Gemini (Vertex) — recommended:**
-- `vertex/gemini-3-pro-image-preview` - Gemini 3 Pro Image (default, highest quality)
-- `vertex/gemini-3.1-flash-image-preview` - Gemini 3.1 Flash Image (balanced)
-- `vertex/gemini-2.5-flash-image` - Gemini 2.5 Flash Image (fast)
-
-**MiniMax Canvas:**
-- `minimax/canvas-30-p` - High quality
+**MiniMax Canvas (recommended):**
+- `minimax/canvas-30-p` - High quality (Nano Banana Pro / Gemini 3 Pro Image)
 - `minimax/canvas-31-f` - Balanced quality / speed
 - `minimax/canvas-25-f` - Fast
 - `minimax/canvas-20-low` - Lowest cost
 
-**Other:**
-- `replicate/bytedance/seedream-4.5` - ByteDance Seedream 4.5
-- `fal/flux-dev` - Flux Dev (FAL)
+**Gemini (Vertex):**
+- `vertex/gemini-3-pro-image-preview` - Gemini 3 Pro Image (highest quality)
+- `vertex/gemini-3.1-flash-image-preview` - Gemini 3.1 Flash Image (balanced)
+- `vertex/gemini-2.5-flash-image` - Gemini 2.5 Flash Image (fast)
 
 **Background removal:**
 - `replicate/lucataco/remove-bg` - Background removal
