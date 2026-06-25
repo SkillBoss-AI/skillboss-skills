@@ -88,35 +88,24 @@ Complete model list and detailed parameter documentation.
 
 ### Image Generation
 
-**Vertex (Recommended):**
-- `vertex/gemini-2.5-flash-image-preview` - Gemini 2.5 Flash Image (preferred)
-- `vertex/gemini-3-pro-image-preview` - Gemini 3 Pro Image
-- `vertex/imagen-4-fast` - Imagen 4 Fast
-- `vertex/imagen-4` - Imagen 4
-- `vertex/imagen-4-ultra` - Imagen 4 Ultra
-- `openai/dall-e-3` - OpenAI DALL-E 3
+**Gemini (Vertex) — recommended:**
+- `vertex/gemini-3-pro-image-preview` - Gemini 3 Pro Image (default, highest quality)
+- `vertex/gemini-3.1-flash-image-preview` - Gemini 3.1 Flash Image (balanced)
+- `vertex/gemini-2.5-flash-image` - Gemini 2.5 Flash Image (fast)
 
-**Replicate:**
-- `replicate/black-forest-labs/flux-1.1-pro` - High quality
-- `replicate/black-forest-labs/flux-1.1-pro-ultra` - Ultra quality
-- `replicate/black-forest-labs/flux-schnell` - Fast generation
-- `replicate/black-forest-labs/flux-2-pro` - Flux 2 Pro
-- `replicate/black-forest-labs/flux-2-max` - Flux 2 Max
+**MiniMax Canvas:**
+- `minimax/canvas-30-p` - High quality
+- `minimax/canvas-31-f` - Balanced quality / speed
+- `minimax/canvas-25-f` - Fast
+- `minimax/canvas-20-low` - Lowest cost
+
+**Other:**
 - `replicate/bytedance/seedream-4.5` - ByteDance Seedream 4.5
+- `fal/flux-dev` - Flux Dev (FAL)
+
+**Background removal:**
 - `replicate/lucataco/remove-bg` - Background removal
 - `replicate/851-labs/background-remover` - Background removal v2
-
-**FAL.ai:**
-- `fal/flux-dev` - Flux Dev (high quality, faster than Replicate)
-- `fal/sd3.5-large` - Stable Diffusion 3.5 Large (cheapest, good quality)
-- `fal/upscale` - Creative upscaler (2x or 4x)
-- `fal/img2img` - Image-to-image transformation (FLUX dev)
-
-**Together AI:**
-- `together/flux-dev` - Flux Dev via Together AI (fastest)
-
-**MiniMax:**
-- `mm/img` - Fast image generation
 
 ### Image Upscale & Transformation (FAL)
 
