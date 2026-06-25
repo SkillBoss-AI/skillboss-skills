@@ -88,20 +88,9 @@ Complete model list and detailed parameter documentation.
 
 ### Image Generation
 
-**MiniMax Canvas (recommended):**
-- `minimax/canvas-30-p` - High quality (Nano Banana Pro / Gemini 3 Pro Image)
-- `minimax/canvas-31-f` - Balanced quality / speed
-- `minimax/canvas-25-f` - Fast
-- `minimax/canvas-20-low` - Lowest cost
-
-**Gemini (Vertex):**
-- `vertex/gemini-3-pro-image-preview` - Gemini 3 Pro Image (highest quality)
-- `vertex/gemini-3.1-flash-image-preview` - Gemini 3.1 Flash Image (balanced)
-- `vertex/gemini-2.5-flash-image` - Gemini 2.5 Flash Image (fast)
-
-**Background removal:**
-- `replicate/lucataco/remove-bg` - Background removal
-- `replicate/851-labs/background-remover` - Background removal v2
+- `nano-banana/pro` - Highest quality (Gemini 3 Pro Image class)
+- `nano-banana/ultra` - High quality, balanced
+- `nano-banana/fast` - Fast, economical
 
 ### Image Upscale & Transformation (FAL)
 
