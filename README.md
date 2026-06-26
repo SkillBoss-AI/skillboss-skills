@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/heeyo-life-skillboss-skills-badge.png)](https://mseep.ai/app/heeyo-life-skillboss-skills)
+
 <div align="center">
 
 # <img src="assets/skillboss-logo.svg" alt="SkillBoss" width="56" /> SkillBoss Skills
